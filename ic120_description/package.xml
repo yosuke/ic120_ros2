@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>ic120_description</name>
+  <version>1.0.0</version>
+  <description>The ic120_description package</description>
+
+  <maintainer email="example@example.com">example</maintainer>
+  
+  <license>-</license>
+
+  <url type="website"></url>
+	<url type="bugtracker"></url>
+	<url type="repository"></url>
+
+  <exec_depend>robot_localization</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+    <!--gazebo_ros gazebo_media_path="${prefix}"/-->
+  </export>
+</package>

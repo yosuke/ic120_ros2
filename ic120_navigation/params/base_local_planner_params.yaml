@@ -1,0 +1,75 @@
+base_local_planner:
+  ros__parameters:
+    controller_frequency: 10.0
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.5
+    min_theta_velocity_threshold: 0.1
+    failure_tolerance: 0.3
+    progress_checker_plugins: ["progress_checker"]
+    goal_checker_plugins: ["goal_checker"]
+    controller_plugins: ["FollowPath"]
+
+    #progress cehcker parameters
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      required_movement_radius: 0.5
+      movement_time_allowance: 10.0
+        
+    #goal_checker_plugins
+    goal_checker:
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 1.0
+      yaw_goal_tolerance: 0.1
+      stateful: True
+      
+    #DWB parameters
+    FollowPath:
+      plugin: "dwb_core::DWBLocalPlanner"
+      # dwb controller parameters
+      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+      prune_plan: True
+      debug_trajectory_details: True
+      transform_tolerance: 0.2
+      short_circuit_trajectory_evaluation: True
+      path_distance_bias: 0.5
+      goal_distance_bias: 0.8
+      occdist_scale: 0.03
+      max_scaling_factor: 0.2
+      scaling_speed: 0.25
+      PathAlign.scale: 32.0
+      GoalAlign.scale: 24.0
+      PathDist.scale: 32.0
+      GoalDist.scale: 24.0
+      
+      #XY Theta Iterator parameters
+      vx_samples: 5
+      vy_samples: 5
+      vth_samples: 25
+      
+      #Kinematic parameters parameters
+      max_vel_theta : 1.5
+      min_speed_xy: 0.0
+      max_speed_xy: 0.0
+      min_speed_theta: 0.0
+      min_vel_x: -1.0
+      min_vel_y: 0.0
+      max_vel_x: 1.0
+      max_vel_y: 0.0
+      acc_lim_x: 3.0
+      acc_lim_y: 0.0
+      acc_lim_theta: 3.1
+      decel_lim_x: 0.0
+      decel_lim_y: 0.0
+      decel_lim_theta: 0.0
+        
+      # StandardTrajectoryGenerator parameters
+      sim_time: 4.0
+      time_granularity: 0.02
+      angular_granularity: 0.02
+      
+      # GoalAlignClitic parameters
+      forward_point_distance: 0.6
+      
+      # OscillationCritidc parameters
+      oscillation_reset_dist: 0.0
+      oscillation_rest_angle: 0.0

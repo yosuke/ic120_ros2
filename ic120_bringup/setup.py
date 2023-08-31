@@ -18,8 +18,8 @@ setup(
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='g3',
-    maintainer_email='kasahara.yuichiro.res@gmail.com',
-    description='TODO: Package description',
+    maintainer_email='ws@todo.todo',
+    description='The ic120_bringup package',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={

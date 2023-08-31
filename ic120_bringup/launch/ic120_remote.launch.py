@@ -1,14 +1,15 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
-from launch.actions import IncludeLaunchDescription
+from launch_ros.actions import Node, PushRosNamespace
+from launch.actions import GroupAction, IncludeLaunchDescription, DeclareLaunchArgument
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.actions import DeclareLaunchArgument
 import xacro
 
+#plane=9
 robot_name="ic120"
+use_namespace="true"
 
 def generate_launch_description():
     ic120_description_dir=get_package_share_directory("ic120_description")
@@ -30,30 +31,45 @@ def generate_launch_description():
             output="screen",
             arguments=['0.66', '0', '0', '0', '0', '0', robot_name + '_tf/base_link', robot_name + "_tf/base_link_rot"]
         ),
-        Node(
-            package='gnss_poser',
-            name='fix_imu2tfpose',
-            output="screen",
-        ),
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(ekf_localization_launch_file_path),
-        ),
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            output="screen",
-            parameters=[params]
-        ),
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(ic120_navigation_launch_file_path),
-        ),
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(ic120_track_pid_control_launch_file_path),
-        ),
-        #Node(
-        #    package='ros2topic',
-        #    executable='cmd_spin_publisher',
-        #    output="screen",
-        #    parameters=[params]
-        #),
+        GroupAction([
+            PushRosNamespace(
+                condition=IfCondition(use_namespace),
+                namespace=robot_name),
+
+            DeclareLaunchArgument('robot_name', 
+                                  default_value=robot_name,
+            ),
+            Node(
+                package='gnss_poser',
+                executable='gnss_poser',
+                name='fix_imu2tfpose',
+                output="screen",
+                namespace="PoSLV",
+                parameters=[{"coodinate_system":4}]
+            ),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(ekf_localization_launch_file_path),
+                launch_arguments={'robot_name': robot_name}.items(),
+            ),
+            Node(
+                package='robot_state_publisher',
+                executable='robot_state_publisher',
+                output="screen",
+                parameters=[params]
+            ),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(ic120_navigation_launch_file_path),
+                launch_arguments={'robot_name': robot_name}.items(),
+            ),
+            IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(ic120_track_pid_control_launch_file_path),
+            ),
+            #Node(
+            #    package='ros2topic',
+            #    executable='topic',
+            #    name='cmd_spin_publisher',
+            #    output="screen",
+            #    arguments=['pub', '/ic120/cmd_spin', 'std_msgs/Bool', 'True', '-r', '1'],
+            #),
+        ]),
     ])

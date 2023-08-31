@@ -3,8 +3,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.actions import DeclareLaunchArgument
 import xacro
 
 robot_name="ic120"
@@ -31,6 +30,10 @@ def generate_launch_description():
     params = {'robot_description': doc.toxml()}
 
     return LaunchDescription([
+        DeclareLaunchArgument(
+            'robot_name',
+            default_value='ic120',
+        ),
 
         DeclareLaunchArgument(
             'ic120_ekf_yaml',

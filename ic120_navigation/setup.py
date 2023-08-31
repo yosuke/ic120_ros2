@@ -23,15 +23,15 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='commmon',
-    maintainer_email='kasahara.yuichiro.res@gmail.com',
+    maintainer='ws',
+    maintainer_email='ws@todo.todo',
     description='TODO: Package description',
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'dump_navigation = ic120_navigation.dump_navigation:main',
-            'dump_srv_server = ic120_navigation.dump_srv_server:main',
+            'dumpup_srv_server = ic120_navigation.dumpup_srv_server:main',
             'nav_srv_server = ic120_navigation.nav_srv_server:main',
             'poseStamped2Odometry = ic120_navigation.poseStamped2Odometry:main',
         ],

@@ -10,26 +10,28 @@ import math
 from nav2_msgs.action import NavigateToPose
 from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Vector3
-from ic120_navigation.srv import DumpNav
+from ic120_msgs.srv import DumpNav
 from geometry_msgs.msg import Pose
 from std_msgs.msg import Bool
 from sensor_msgs.msg import JointState
 
-dumpup_pub = rclpy.Publisher('/ic120/cmd_dump', Bool, queue_size=1)
-dump_direction_pub = rclpy.Publisher('/ic120/cmd_dump_direction', Bool, queue_size=1)
-left_track_pid_pause_pub = rclpy.Publisher('/ic120/left_track/pid_enable', Bool, queue_size=5)
-right_track_pid_pause_pub = rclpy.Publisher('/ic120/right_track/pid_enable', Bool, queue_size=5)
 
 dumping_time = 20*10
 
 vessel_angle=0 
 
-class dumpup_srv(Node):
+class DumpUpSrv(Node):
     
     def __init__(self):
-        super.__init__('dumpup_srv')
-        rclpy.Subscriber("/ic120/joint_states", JointState, self.js_callback,queue_size=10)
-        s = rclpy.Service("dumpup_srv", DumpNav, self.server)
+        super().__init__('dumpup_srv')
+        self.dumpup_pub = self.create_publisher(Bool, '/ic120/cmd_dump', 1)
+        self.dump_direction_pub = self.create_publisher(Bool, '/ic120/cmd_dump_direction', 1)
+        self.left_track_pid_pause_pub = self.create_publisher(Bool, '/ic120/left_track/pid_enable', 5)
+        self.right_track_pid_pause_pub = self.create_publisher(Bool, '/ic120/right_track/pid_enable', 5)
+        self.create_subscription(JointState, "/ic120/joint_states", self.js_callback, 10)
+        self.s = self.create_service(DumpNav, "dumpup_srv", self.server)
+        self.rate_5=self.create_rate(0.5)
+        self.rate_2=self.create_rate(0.2)
         print("Ready to Dump up service client.")
 
     def js_callback(self, data):
@@ -50,35 +52,35 @@ class dumpup_srv(Node):
         is_dump.data=True
 
         while vessel_angle >= -65.0/180*math.pi:
-            dump_direction_pub.publish(is_dump)
-            dumpup_pub.publish(is_dump_direction)
-            left_track_pid_pause_pub.publish(pid_enable)
-            right_track_pid_pause_pub.publish(pid_enable)
-            rclpy.sleep(0.5)
+            self.dump_direction_pub.publish(is_dump)
+            self.dumpup_pub.publish(is_dump_direction)
+            self.left_track_pid_pause_pub.publish(pid_enable)
+            self.right_track_pid_pause_pub.publish(pid_enable)
+            self.rate_5.sleep()
 
-        rclpy.sleep(2.0)
+        self.rate_2.sleep()
         ### dump down
         is_dump.data=False
 
         while vessel_angle <= 0.0:
-            dump_direction_pub.publish(is_dump)
-            dumpup_pub.publish(is_dump_direction)
-            left_track_pid_pause_pub.publish(pid_enable)
-            right_track_pid_pause_pub.publish(pid_enable)
-            rclpy.sleep(0.5)
-        rclpy.sleep(2.0)
+            self.dump_direction_pub.publish(is_dump)
+            self.dumpup_pub.publish(is_dump_direction)
+            self.left_track_pid_pause_pub.publish(pid_enable)
+            self.right_track_pid_pause_pub.publish(pid_enable)
+            self.rate_5.sleep()
+        self.rate_2.sleep()
         response = DumpNav.Response()
         response.is_ok.data = True
         print("Done")
         print("Waiting for next service call")
         pid_enable.data = True
-        left_track_pid_pause_pub.publish(pid_enable)
-        right_track_pid_pause_pub.publish(pid_enable)
+        self.left_track_pid_pause_pub.publish(pid_enable)
+        self.right_track_pid_pause_pub.publish(pid_enable)
         return response
 
 def main(args=None):
     rclpy.init(args=args)
-    dumpup_srv=dumpup_srv()
+    dumpup_srv=DumpUpSrv()
     rclpy.spin(dumpup_srv)
     dumpup_srv.destroy_node()
     rclpy.shutdown()

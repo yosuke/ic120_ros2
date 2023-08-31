@@ -1,9 +1,13 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch_ros.actions import Node
+from launch.actions import GroupAction, DeclareLaunchArgument
+from launch_ros.actions import Node, PushRosNamespace
+from launch.conditions import IfCondition
 import xacro
 
+robot_name="ic120"
+use_namespace="true"
 
 def generate_launch_description():
     ic120_navigation_dir=get_package_share_directory("ic120_navigation")
@@ -15,22 +19,37 @@ def generate_launch_description():
     params = {'robot_description': doc.toxml()}
 
     return LaunchDescription([
-        Node(
-            package='joint_state_publisher',
-            executable='joint_state_publisher',
-            output="screen",
-            parameters=[params]
-        ),
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            output="screen",
-            parameters=[params]
-        ),
-        Node(
-            package="rviz2",
-            executable="rviz2",
-            arguments=["--display-config", rviz_config],
-            output="screen",
-        ),
+        GroupAction([
+            PushRosNamespace(
+                condition=IfCondition(use_namespace),
+                namespace=robot_name),
+
+             DeclareLaunchArgument('use_gui', 
+                                  default_value="true",
+            ),
+            DeclareLaunchArgument('config', 
+                                  default_value="robot",
+            ),
+
+            Node(
+                package='joint_state_publisher',
+                executable='joint_state_publisher',
+                output="screen",
+                parameters=[params]
+            ),
+            Node(
+                package='robot_state_publisher',
+                executable='robot_state_publisher',
+                output="screen",
+                parameters=[params]
+            ),
+            Node(
+                package="rviz2",
+                executable="rviz2",
+                name="rviz_ic120",
+                arguments=["--display-config", rviz_config],
+                output="screen",
+                parameters=[{"tf_prefix":'ic120_tf'}],
+            ),
+        ]),
     ])

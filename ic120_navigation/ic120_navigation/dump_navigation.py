@@ -29,60 +29,63 @@ class Ic120Navigation(Node):
         self.tfBuffer = tf2_ros.Buffer()
         self.listener = tf2_ros.TransformListener(self.tfBuffer, self)
 
-        time = Time(0)
-        self.tfBuffer.can_transform(target_frame="world",  source_frame="map", time=Time(0),timeout=Duration(4.0))
-        world2map_trans,world2map_rot = self.tfBuffer.lookup_transform("world", "map", rclpy.Time(0))
+        transfrom_flg=self.tfBuffer.can_transform(target_frame="world",  source_frame="map", time=Time(seconds=0),timeout=Duration(seconds=4.0))
+        
+        if(transfrom_flg == True):
+            self.get_logger().info("###############################################")
 
-        print("wait actionclient")
+            world2map_trans,world2map_rot = self.tfBuffer.lookup_transform(target_frame="world", source_frame="map", time=Time(seconds=0))
 
-        self.client.wait_for_server()
+            print("wait actionclient")
 
-        print("wait service")
+            self.client.wait_for_server()
 
-        rclpy.wait_for_service('nav_srv')
+            print("wait service")
 
-        print("Start loop")
+            rclpy.wait_for_service('nav_srv')
 
-        while True:
-            nav_srv_proxy  = rclpy.ServiceProxy('nav_srv', DumpNav)
-            request = DumpNav.request()
-            response = nav_srv_proxy (request)
-            if(response.is_ok.data == False):
-                rclpy.sleep(1)
-                continue
-            goal = self.goal_pose(response.target_pose)
-            self.client.send_goal(goal)
+            print("Start loop")
+
             while True:
-                now = rclpy.Time.now()
-                self.tfBuffer.can_transform("map", "/ic120_tf/base_link", now, rclpy.Duration(4.0))
-                position, quaternion = self.tfBuffer.lookup_transform("map", "/ic120_tf/base_link", now)
+                nav_srv_proxy  = rclpy.ServiceProxy('nav_srv', DumpNav)
+                request = DumpNav.request()
+                response = nav_srv_proxy (request)
+                if(response.is_ok.data == False):
+                    rclpy.sleep(1)
+                    continue
+                goal = self.goal_pose(response.target_pose)
+                self.client.send_goal(goal)
+                while True:
+                    now = Time.now()
+                    self.tfBuffer.can_transform(target_frame="map", source_frame="/ic120_tf/base_link", time=now, timeout=Duration(4.0))
+                    position, quaternion = self.tfBuffer.lookup_transform("map", "/ic120_tf/base_link", now)
 
-                if(response.orientation_flag.data == True):
-                    print("orientation_flat==True")
-                    if(self.client.wait_for_result(rclpy.Duration(0.5)) == True):
-                        if(response.dump_flag.data == True):
-                            rclpy.sleep(1.0)
-                            print("waiting for dumpup_manager")
-                            rclpy.wait_for_service('dumpup_srv') 
-                            dumpup_srv_proxy  = rclpy.ServiceProxy('dumpup_srv', DumpNav)
-                            request = DumpNav.request()
-                            response = dumpup_srv_proxy (request)
-                            if(response.is_ok.data == True):
-                                print("finished")
-                                break
-                        print("next waypoint")
-                        break
-                    print("moving!")
-                else:
-                    print("orientation_flag==False")
-                    # ウェイポイントのゴールの周囲１ｍ以内にロボットが来たら、次のウェイポイントを発行する
-                    if(math.sqrt((position[0]-goal.target_pose.pose.position.x)**2 + (position[1]-goal.target_pose.pose.position.y)**2 ) <= 0.5):
-                        print("next waitpoint")
-                        break
+                    if(response.orientation_flag.data == True):
+                        print("orientation_flat==True")
+                        if(self.client.wait_for_result(rclpy.Duration(0.5)) == True):
+                            if(response.dump_flag.data == True):
+                                rclpy.sleep(1.0)
+                                print("waiting for dumpup_manager")
+                                rclpy.wait_for_service('dumpup_srv') 
+                                dumpup_srv_proxy  = rclpy.ServiceProxy('dumpup_srv', DumpNav)
+                                request = DumpNav.request()
+                                response = dumpup_srv_proxy (request)
+                                if(response.is_ok.data == True):
+                                    print("finished")
+                                    break
+                            print("next waypoint")
+                            break
+                        print("moving!")
                     else:
-                        print("moving!!!")
-                        rclpy.sleep(0.5)
-            # rospy.spin()
+                        print("orientation_flag==False")
+                        # ウェイポイントのゴールの周囲１ｍ以内にロボットが来たら、次のウェイポイントを発行する
+                        if(math.sqrt((position[0]-goal.target_pose.pose.position.x)**2 + (position[1]-goal.target_pose.pose.position.y)**2 ) <= 0.5):
+                            print("next waitpoint")
+                            break
+                        else:
+                            print("moving!!!")
+                            rclpy.sleep(0.5)
+                # rospy.spin()
 
     def goal_pose(self,pose):
         print(pose)

@@ -3,8 +3,8 @@
 <package format="3">
   <name>ic120_msgs</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="kasahara.yuichiro.res@gmail.com">g3</maintainer>
+  <description>The ic120_msgs package</description>
+  <maintainer email="example@example.com">g3</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

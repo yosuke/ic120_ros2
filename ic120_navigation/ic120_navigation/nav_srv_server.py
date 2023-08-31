@@ -1,18 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-from nav_msgs import msg
 import rclpy
 from rclpy.node import Node
 import tf2_ros
-from nav_msgs.msg import Odometry
 import math
-from nav2_msgs.action import NavigateToPose
 from geometry_msgs.msg import Quaternion
 from geometry_msgs.msg import Vector3
-from ic120_navigation.srv import DumpNav
+from ic120_msgs.srv import DumpNav
 from geometry_msgs.msg import PoseArray,Pose
-
+from rclpy.time import Time
+from rclpy.time import Duration
 
 # waypointはworld座標系で記載する
 # X,Y,Theta, orientation_flag, dumpup_flag
@@ -71,30 +68,33 @@ waypoint_num=0
 world2map_trans=[0,0,0]
 world2map_rot=[0,0,0,0]
 
-waypoint_posearray_pub = rclpy.Publisher("/ic120/waypoints", PoseArray, queue_size=10)
 
-
-class fake_const_manager(Node):
+class FakeConstManager(Node):
 
     def __init__(self):
         super().__init__('fake_const_manager')
-        now = rclpy.Time.now()
-        listener = tf2_ros.TransformListener()
-        listener.waitForTransform("world", "map", rclpy.Time(0), rclpy.Duration(4.0))
-        world2map_trans,world2map_rot = listener.lookupTransform("world", "map", rclpy.Time(0))
-        print("World2Map Trans:", world2map_trans[0], world2map_trans[1],  world2map_trans[2])
-        self.waypoint_PoseArray_publisher()
-        s = rclpy.Service("/ic120/nav_srv", DumpNav, self.server)
-        print("Ready to navigation service client")
+        now = self.get_clock().now()
+        self.waypoint_posearray_pub = self.create_publisher(PoseArray, "/ic120/waypoints", 10)
+        self.tfBuffer = tf2_ros.Buffer()
+        listener = tf2_ros.TransformListener(self.tfBuffer, self)
+        #listener.waitForTransform("world", "map", rclpy.Time(0), rclpy.Duration(4.0))
+        transfrom_flg=self.tfBuffer.can_transform(target_frame="world",  source_frame="map", time=Time(seconds=0),timeout=Duration(seconds=4.0))
+        if(transfrom_flg == True):
+            world2map_trans,world2map_rot = self.tfBuffer.lookup_transform(target_frame="world", source_frame="map", time=Time(0))
+            print("World2Map Trans:", world2map_trans[0], world2map_trans[1],  world2map_trans[2])
+            self.waypoint_PoseArray_publisher()
+            self.s = self.create_service(DumpNav, "/ic120/nav_srv", self.server)
+            print("Ready to navigation service client")
 
     def euler_to_quaternion(self,euler):
-        q = tf2_ros.transformations.quaternion_from_euler(euler.x, euler.y, euler.z)
-        return Quaternion(x=q[0], y=q[1], z=q[2], w=q[3])
+        quaternion = Quaternion()
+        quaternion.set_euler(euler.x, euler.y, euler.z)
+        return quaternion
     
     def waypoint_PoseArray_publisher(self):
         waypoints_array = PoseArray()
         waypoints_array.header.frame_id="world"
-        waypoints_array.header.stamp = rclpy.Time.now()
+        waypoints_array.header.stamp = self.get_clock().now()
         for waypoint in waypoints:
             waypoint_arrow = Pose()
             waypoint_arrow.position.x=waypoint[0]
@@ -104,7 +104,7 @@ class fake_const_manager(Node):
             waypoints_array.poses.append(waypoint_arrow)
         # print(waypoints_array)
         rclpy.sleep(1)
-        waypoint_posearray_pub.publish(waypoints_array)
+        self.waypoint_posearray_pub.publish(waypoints_array)
 
     def server(self,req):
         print("Get service call for navigation")
@@ -133,7 +133,7 @@ class fake_const_manager(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    fake_const_manager = fake_const_manager()
+    fake_const_manager = FakeConstManager()
     rclpy.spin(fake_const_manager)
     fake_const_manager.destroy_node()
     rclpy.shutdown()

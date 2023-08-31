@@ -1,10 +1,8 @@
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
-from launch.actions import DeclareLaunchArgument
-import xacro
+from launch_ros.actions import Node, PushRosNamespace
+from launch.actions import GroupAction
 
 robot_name="ic120"
 
@@ -13,11 +11,16 @@ def generate_launch_description():
     rviz_config=os.path.join(ic120_description_dir, "rviz2", "urdf.rviz")
 
     return LaunchDescription([
-        Node(
-            package="rviz2",
-            executable="rviz2",
-            arguments=["--display-config", rviz_config],
-            output="screen",
-        ),
-        
+        GroupAction([
+            PushRosNamespace(
+                #condition=IfCondition(use_namespace),
+                namespace=robot_name),
+            Node(
+                package="rviz2",
+                executable="rviz2",
+                name="rviz_ic120",
+                arguments=["--display-config", rviz_config],
+                output="screen",
+            ),
+        ]),
     ])

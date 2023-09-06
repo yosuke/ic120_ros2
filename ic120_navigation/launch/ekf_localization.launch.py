@@ -13,25 +13,21 @@ def generate_launch_description():
     ic120_ekf_yaml = LaunchConfiguration('ekf_yaml_file', default=os.path.join(get_package_share_directory('ic120_navigation'), 'config', 'ic120_ekf.yaml'))
 
     return LaunchDescription([
-        DeclareLaunchArgument(
-            'robot_name',
-            default_value='ic120',
-        ),
-        DeclareLaunchArgument(
-            'ic120_ekf_yaml',
-            default_value=ic120_ekf_yaml,
-        ),
+
+        DeclareLaunchArgument('robot_name', default_value='ic120'),
+        DeclareLaunchArgument('ic120_ekf_yaml', default_value=ic120_ekf_yaml),
+
         Node(
             package="ic120_navigation",
             executable="poseStamped2Odometry",
             name="poseStamped2Odometry",
-            output="screen",
         ),
         Node(
             package='robot_localization',
             executable='ekf_node',
             name='ekf_global',
             output="screen",
+            namespace="ekf_global",
             parameters=[ic120_ekf_yaml,
                         {'tf_prefix' : "",
                          'odom_frame' : robot_name + "_tf/odom",

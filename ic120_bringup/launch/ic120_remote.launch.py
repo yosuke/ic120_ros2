@@ -12,14 +12,17 @@ robot_name="ic120"
 use_namespace="true"
 
 def generate_launch_description():
+    
     ic120_description_dir=get_package_share_directory("ic120_description")
     ic120_navigation_dir=get_package_share_directory("ic120_navigation")
     ic120_track_pid_control_dir=get_package_share_directory("ic120_track_pid_control")
     xacro_model = os.path.join(ic120_description_dir, "urdf", "ic120.xacro")
+
     ekf_localization_launch_file_path=os.path.join(ic120_navigation_dir,"launch","ekf_localization.launch.py")
     ic120_navigation_launch_file_path=os.path.join(ic120_navigation_dir,"launch","ic120_navigation.launch.py")
-    ic120_track_pid_control_launch_file_path=os.path.join(ic120_track_pid_control_dir,'launch',"ic120_track_pid_control.launch")
-    doc = xacro.parse(open(xacro_model)) #xacroファイルをurfファイルに変換
+    ic120_track_pid_control_launch_file_path=os.path.join(ic120_track_pid_control_dir,'launch',"ic120_track_pid_control.launch.py")
+    
+    doc = xacro.parse(open(xacro_model))
     xacro.process_doc(doc)
     params = {'robot_description': doc.toxml()}
 
@@ -27,23 +30,32 @@ def generate_launch_description():
         Node(
             package='tf2_ros',
             executable='static_transform_publisher',
-            name='static_transform_publisher',
+            name='base_link_offset_tf',
             output="screen",
-            arguments=['0.66', '0', '0', '0', '0', '0', robot_name + '_tf/base_link', robot_name + "_tf/base_link_rot"]
+            namespace=robot_name,
+            arguments=['--x','0.66', 
+                       '--y','0', 
+                       '--z','0', 
+                       '--yqw','0', 
+                       '--pitch','0', 
+                       '--roll','0', 
+                       '--frame-id', robot_name + '_tf/base_link',
+                       '--child-frame-id', robot_name + "_tf/base_link_rot"]
         ),
+
         GroupAction([
             PushRosNamespace(
                 condition=IfCondition(use_namespace),
                 namespace=robot_name),
 
-            DeclareLaunchArgument('robot_name', 
-                                  default_value=robot_name,
-            ),
+            DeclareLaunchArgument('robot_name', default_value=robot_name,),
+            #DeclareLaunchArgument('plane', default_value=9,),
+
             Node(
                 package='gnss_poser',
                 executable='gnss_poser',
                 name='fix_imu2tfpose',
-                output="screen",
+                output="log",
                 namespace="PoSLV",
                 parameters=[{"coodinate_system":4}]
             ),
@@ -54,7 +66,8 @@ def generate_launch_description():
             Node(
                 package='robot_state_publisher',
                 executable='robot_state_publisher',
-                output="screen",
+                name='robot_state_publisher',
+                namespace=robot_name + '_tf',
                 parameters=[params]
             ),
             IncludeLaunchDescription(
@@ -64,12 +77,14 @@ def generate_launch_description():
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(ic120_track_pid_control_launch_file_path),
             ),
-            #Node(
-            #    package='ros2topic',
-            #    executable='topic',
-            #    name='cmd_spin_publisher',
-            #    output="screen",
-            #    arguments=['pub', '/ic120/cmd_spin', 'std_msgs/Bool', 'True', '-r', '1'],
-            #),
+            Node(
+                package='ic120_bringup',
+                executable='rostopic',
+                name='cmd_spin_publisher',
+                output="screen",
+                parameters=[{'topic_name':'/ic120/cmd_spin',
+                             'time':1,
+                             'value':True}]
+            ),
         ]),
     ])

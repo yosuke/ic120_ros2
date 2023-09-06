@@ -20,30 +20,25 @@ def generate_launch_description():
     params = {'robot_description': doc.toxml()}
 
     return LaunchDescription([
-        DeclareLaunchArgument('gui', 
-                               default_value="true",
-        ),
+
+        DeclareLaunchArgument('gui',  default_value="true",),
+
         Node(
             package='joint_state_publisher_gui',
             executable='joint_state_publisher_gui',
             name='joint_state_publisher_gui',
-            output="screen",
             condition=IfCondition(LaunchConfiguration('gui')),
-            parameters=[params]
         ),
         Node(
             package='joint_state_publisher',
             executable='joint_state_publisher',
             name='joint_state_publisher',
-            output="screen",
             condition=UnlessCondition(LaunchConfiguration('gui')),
-            parameters=[params]
         ),
         Node(
             package='robot_state_publisher',
             executable='robot_state_publisher',
             name='robot_state_publisher',
-            output="screen",
             parameters=[params]
         ),
         Node(
@@ -51,6 +46,5 @@ def generate_launch_description():
             executable="rviz2",
             name="rviz",
             arguments=["--display-config", rviz_config],
-            output="screen",
         ),
     ])

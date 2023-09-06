@@ -21,6 +21,9 @@ def generate_launch_description():
     params = {'robot_description': doc.toxml()}
 
     return LaunchDescription([
+        
+        DeclareLaunchArgument('robot_name', default_value='ic120'),
+        
         GroupAction([
             PushRosNamespace(
                 condition=IfCondition(use_namespace),
@@ -38,18 +41,14 @@ def generate_launch_description():
                 name='dumpup_server'  
             ),
             
-            DeclareLaunchArgument('use_gui', 
-                                  default_value='true',
-            ),
-
-            DeclareLaunchArgument('config', 
-                                  default_value='robot',
-            ),
+            DeclareLaunchArgument('use_gui', default_value='true'),
+            DeclareLaunchArgument('config',  default_value='robot'),
             
             Node(
                 package='robot_state_publisher',
-            executable='robot_state_publisher',
+                executable='robot_state_publisher',
                 output="screen",
+                namespace=robot_name,
                 parameters=[params]
             ),
             Node(
@@ -58,7 +57,7 @@ def generate_launch_description():
                 name="rviz_ic120_nav_demo",
                 arguments=["--display-config", rviz_config],
                 output="screen",
-                parameters=[{"tf_prefix": 'ic120'}]
+                condition=IfCondition(LaunchConfiguration('use_gui')),
             ),
         ]),
     ])

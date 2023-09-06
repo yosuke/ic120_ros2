@@ -9,76 +9,40 @@ import xacro
 robot_name="ic120"
 
 def generate_launch_description():
-    package_share_directory=get_package_share_directory("ic120_description")
-    xacro_model = os.path.join(package_share_directory, "urdf", "ic120.xacro")
+    ic120_description_dir=get_package_share_directory("ic120_description")
+    ic120_navigation_dir=get_package_share_directory("ic120_navigation")
+    xacro_model = os.path.join(ic120_description_dir, "urdf", "ic120.xacro")
     
     bringup_dir=get_package_share_directory("nav2_bringup")
     launch_dir = os.path.join(bringup_dir, 'launch')
 
-    ic120_ekf_yaml = LaunchConfiguration('ekf_yaml_file', default=os.path.join(get_package_share_directory('ic120_navigation'), 'config', 'ic120_ekf.yaml'))
-    map_nav_global_costmap_params_yaml = LaunchConfiguration('global_costmap_yaml_file', default=os.path.join(get_package_share_directory('ic120_navigation'), 'params','map_nav_params', 'global_costmap_params.yaml'))
-    map_nav_local_costmap_params_yaml = LaunchConfiguration('local_costmap_yaml_file', default=os.path.join(get_package_share_directory('ic120_navigation'), 'params','map_nav_params', 'local_costmap_params.yaml'))
-    global_costmap_params_yaml = LaunchConfiguration('global_costmap_yaml_file', default=os.path.join(get_package_share_directory('ic120_navigation'), 'params','odom_nav_params', 'global_costmap_params.yaml'))
-    local_costmap_params_yaml = LaunchConfiguration('local_costmap_yaml_file', default=os.path.join(get_package_share_directory('ic120_navigation'), 'params','odom_nav_params', 'local_costmap_params.yaml'))
-    base_local_planner_params_yaml = LaunchConfiguration('base_local_planner_yaml_file', default=os.path.join(get_package_share_directory('ic120_navigation'), 'params', 'base_local_planner_params.yaml'))
-    base_global_planner_params_yaml = LaunchConfiguration('base_global_planner_yaml_file', default=os.path.join(get_package_share_directory('ic120_navigation'), 'params', 'base_global_planner_params.yaml'))
-    costmap_common_params_yaml = LaunchConfiguration('costmap_common_yaml_file', default=os.path.join(get_package_share_directory('ic120_navigation'), 'costmap_common_params.yaml'))
-    move_base_params_yaml = LaunchConfiguration('move_base_yaml_file', default=os.path.join(get_package_share_directory('ic120_navigation'), 'params','move_base_params.yaml'))
+    ic120_ekf_yaml = LaunchConfiguration('ekf_yaml_file', default=os.path.join(ic120_navigation_dir, 'config', 'ic120_ekf.yaml'))
+    map_nav_global_costmap_params_yaml = LaunchConfiguration('global_costmap_yaml_file', default=os.path.join(ic120_navigation_dir, 'params','map_nav_params', 'global_costmap_params.yaml'))
+    map_nav_local_costmap_params_yaml = LaunchConfiguration('local_costmap_yaml_file', default=os.path.join(ic120_navigation_dir ,'params','map_nav_params', 'local_costmap_params.yaml'))
+    global_costmap_params_yaml = LaunchConfiguration('global_costmap_yaml_file', default=os.path.join(ic120_navigation_dir, 'params','odom_nav_params', 'global_costmap_params.yaml'))
+    local_costmap_params_yaml = LaunchConfiguration('local_costmap_yaml_file', default=os.path.join(ic120_navigation_dir, 'params','odom_nav_params', 'local_costmap_params.yaml'))
+    base_local_planner_params_yaml = LaunchConfiguration('base_local_planner_yaml_file', default=os.path.join(ic120_navigation_dir, 'params', 'base_local_planner_params.yaml'))
+    base_global_planner_params_yaml = LaunchConfiguration('base_global_planner_yaml_file', default=os.path.join(ic120_navigation_dir, 'params', 'base_global_planner_params.yaml'))
+    costmap_common_params_yaml = LaunchConfiguration('costmap_common_yaml_file', default=os.path.join(ic120_navigation_dir, 'costmap_common_params.yaml'))
+    move_base_params_yaml = LaunchConfiguration('move_base_yaml_file', default=os.path.join(ic120_navigation_dir, 'params','move_base_params.yaml'))
     
-    doc = xacro.parse(open(xacro_model)) #xacroファイルをurfファイルに変換
+    doc = xacro.parse(open(xacro_model)) 
     xacro.process_doc(doc)
     params = {'robot_description': doc.toxml()}
 
     return LaunchDescription([
-        DeclareLaunchArgument(
-            'robot_name',
-            default_value='ic120',
-        ),
 
-        DeclareLaunchArgument(
-            'ic120_ekf_yaml',
-            default_value=ic120_ekf_yaml,
-        ),
-
-        DeclareLaunchArgument(
-            'map_nav_global_costmap_params_yaml',
-            default_value=map_nav_global_costmap_params_yaml,
-        ),
-
-        DeclareLaunchArgument(
-            'map_nav_local_costmap_params_yaml',
-            default_value=map_nav_local_costmap_params_yaml,
-        ),
-
-        DeclareLaunchArgument(
-            'global_costmap_params_yaml',
-            default_value=global_costmap_params_yaml,
-        ),
-
-        DeclareLaunchArgument(
-            'odom_nav_local_costmap_params_yaml',
-            default_value=local_costmap_params_yaml,
-        ),
-
-        DeclareLaunchArgument(
-            'base_local_planner_params_yaml',
-            default_value=base_local_planner_params_yaml,
-        ),
+        DeclareLaunchArgument('robot_name', default_value='ic120'),
+        DeclareLaunchArgument('ic120_ekf_yaml', default_value=ic120_ekf_yaml),
+        DeclareLaunchArgument('map_nav_global_costmap_params_yaml', default_value=map_nav_global_costmap_params_yaml),
+        DeclareLaunchArgument('map_nav_local_costmap_params_yaml', default_value=map_nav_local_costmap_params_yaml),
+        DeclareLaunchArgument('global_costmap_params_yaml', default_value=global_costmap_params_yaml),
+        DeclareLaunchArgument('odom_nav_local_costmap_params_yaml', default_value=local_costmap_params_yaml),
+        DeclareLaunchArgument('base_local_planner_params_yaml', default_value=base_local_planner_params_yaml),
+        DeclareLaunchArgument('base_global_planner_params_yaml', default_value=base_global_planner_params_yaml), 
+        DeclareLaunchArgument('costmap_common_params_yaml', default_value=costmap_common_params_yaml),
+        DeclareLaunchArgument('move_base_params_yaml', default_value=move_base_params_yaml),
         
-        DeclareLaunchArgument(
-            'base_global_planner_params_yaml',
-            default_value=base_global_planner_params_yaml,
-        ), 
-
-        DeclareLaunchArgument(
-            'costmap_common_params_yaml',
-            default_value=costmap_common_params_yaml,
-        ),
-        
-        DeclareLaunchArgument(
-            'move_base_params_yaml',
-            default_value=move_base_params_yaml,
-        ),
         # local costmap
         Node(
             package='nav2_costmap_2d',

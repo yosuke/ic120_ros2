@@ -7,12 +7,15 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 import xacro
 
+robot_name="ic120"
+
 def generate_launch_description():
     ic120_unity_dir=get_package_share_directory("ic120_unity")
     rviz_config = os.path.join(ic120_unity_dir, "rviz2", "ic120_standby.rviz")
     ic120_unity_launch_file_path=os.path.join(ic120_unity_dir,"launch","ic120_unity.launch.py")
 
     return LaunchDescription([
+
         DeclareLaunchArgument('/use_sim_time', default_value="true",),
         DeclareLaunchArgument('robot_name', default_value="ic120",),
         DeclareLaunchArgument('init_pose', default_value="-x 0,-y 0,-z0",),
@@ -22,6 +25,7 @@ def generate_launch_description():
             package='tf2_ros',
             executable='static_transform_publisher',
             name='world_to_map',
+            namespace=robot_name,
             arguments=['0', '0', '0', '0', '0', '0', 'world', 'map'],
         ),
         
@@ -35,6 +39,5 @@ def generate_launch_description():
             executable="rviz2",
             name="rviz",
             arguments=["--display-config", rviz_config],
-            output="screen",
         ),
     ])

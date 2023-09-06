@@ -10,6 +10,7 @@ robot_name="ic120"
 use_namespace="true"
 
 def generate_launch_description():
+
     ic120_navigation_dir=get_package_share_directory("ic120_navigation")
     rviz_config = os.path.join(ic120_navigation_dir, "rviz", "navigation.rviz")
     xacro_model = os.path.join(get_package_share_directory("ic120_description"), "urdf", "ic120.xacro")
@@ -24,23 +25,14 @@ def generate_launch_description():
                 condition=IfCondition(use_namespace),
                 namespace=robot_name),
 
-             DeclareLaunchArgument('use_gui', 
-                                  default_value="true",
-            ),
-            DeclareLaunchArgument('config', 
-                                  default_value="robot",
-            ),
+             DeclareLaunchArgument('use_gui', default_value="true"),
+            DeclareLaunchArgument('config', default_value="robot"),
 
-            Node(
-                package='joint_state_publisher',
-                executable='joint_state_publisher',
-                output="screen",
-                parameters=[params]
-            ),
             Node(
                 package='robot_state_publisher',
                 executable='robot_state_publisher',
                 output="screen",
+                namespace=robot_name,
                 parameters=[params]
             ),
             Node(

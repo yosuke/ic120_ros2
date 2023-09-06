@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot name="ic120" xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<xacro:property name="PI" value="3.1415926535" />
+	
 	<!-- Import Rviz colors -->
 	<!-- <xacro:include filename="$(find ic120_description)/urdf/materials.xacro" /> -->
 
 	<!-- Base Link -->
-	<link name="base_link"/>
+	<link name="/base_link"/>
 	<joint name="base_joint" type="fixed">
-		<parent link="base_link"/>
-		<child link="body_link"/>
+		<parent link="/base_link"/>
+		<child link="/body_link"/>
 	</joint>
 
 

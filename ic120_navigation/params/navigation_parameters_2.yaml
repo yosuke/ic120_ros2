@@ -1,4 +1,4 @@
-/ic120/bt_navigator:
+bt_navigator:
   ros__parameters:
     use_sim_time: True
     global_frame: map
@@ -59,18 +59,18 @@
       - nav2_drive_on_heading_cancel_bt_node
       - nav2_is_battery_charging_condition_bt_node
 
-/ic120/bt_navigator_navigate_through_poses_rclcpp_node:
+bt_navigator_navigate_through_poses_rclcpp_node:
   ros__parameters:
     use_sim_time: True
 
-/ic120/bt_navigator_navigate_to_pose_rclcpp_node:
+bt_navigator_navigate_to_pose_rclcpp_node:
   ros__parameters:
     use_sim_time: True
 ################################
 #base_local_planner_params.yaml#
 ################################
 
-/ic120/controller_server:
+controller_server:
   ros__parameters:
     use_sim_time: True
     controller_frequency: 20.0
@@ -145,7 +145,7 @@
 #local_costmap_params.yaml#
 ###########################
 
-/ic120/local_costmap:
+local_costmap:
   local_costmap:
     ros__parameters:
       #Costmap2D paraneters
@@ -181,7 +181,7 @@
 #global_costmap_params.yaml#
 ############################
 
-/ic120/global_costmap:
+global_costmap:
   global_costmap:
     ros__parameters:
       #Costmap2D paraneters
@@ -216,7 +216,7 @@
         plugin: "nav2_costmap_2d::InflationLayer"
         inflation_radius: 0.30
 
-/ic120/map_server:
+map_server:
   ros__parameters:
     use_sim_time: True
     # Overridden in launch by the "map" launch configuration or provided default value.
@@ -225,7 +225,7 @@
     topic_name: "map"
     frame_id: "map"
 
-/ic120/map_saver:
+map_saver:
   ros__parameters:
     save_map_timeout: 5.0
     free_thresh_default: 0.25
@@ -236,7 +236,7 @@
 #base_global_planner_params.yaml#
 #################################
 
-/ic120/planner_server:
+planner_server:
   ros__parameters:
     expected_planner_frequency: 20.0
     planner_plugins: ["GridBased"]
@@ -246,7 +246,7 @@
       use_astar: false
       allow_unknown: true
 
-/ic120/smoother_server:
+smoother_server:
   ros__parameters:
     smoother_plugins: ["simple_smoother"]
     simple_smoother:
@@ -255,7 +255,7 @@
       max_its: 1000
       do_refinement: True
 
-/ic120/behavior_server:
+behavior_server:
   ros__parameters:
     local_costmap_topic: local_costmap/costmap_raw
     global_costmap_topic: global_costmap/costmap_raw
@@ -282,7 +282,7 @@
     min_rotational_vel: 0.4
     rotational_acc_lim: 3.2
 
-/ic120/waypoint_follower:
+waypoint_follower:
   ros__parameters:
     loop_rate: 20
     stop_on_failure: false
@@ -292,7 +292,7 @@
       enabled: True
       waypoint_pause_duration: 200
 
-/ic120/velocity_smoother:
+velocity_smoother:
   ros__parameters:
     smoothing_frequency: 20.0
     scale_velocities: False

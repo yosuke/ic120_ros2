@@ -12,18 +12,16 @@ import xacro
 robot_name="ic120"
 use_namespace="true"
 use_sim_time="true"
-use_respawn="true"
 
 def generate_launch_description():
     ic120_description_dir=get_package_share_directory("ic120_description")
+    xacro_model = os.path.join(ic120_description_dir, "urdf", "ic120.xacro")
     ic120_navigation_dir=get_package_share_directory('ic120_navigation')
     
     bringup_dir=get_package_share_directory("nav2_bringup")
     launch_dir = os.path.join(bringup_dir, 'launch')
-    xacro_model = os.path.join(ic120_description_dir, "urdf", "ic120.xacro")
 
     ic120_ekf_yaml = LaunchConfiguration('ekf_yaml_file', default=os.path.join(get_package_share_directory('ic120_navigation'), 'config', 'ic120_ekf.yaml'))
-    ic120_navigation_dir = get_package_share_directory('ic120_navigation')
     behavior_server_params = LaunchConfiguration('behavior_server_params', default=os.path.join(ic120_navigation_dir, 'parameters','behavior_server_params.yaml'))
     bt_navigator_params = LaunchConfiguration('bt_navigator_params', default=os.path.join(ic120_navigation_dir, 'parameters','bt_navigator_params.yaml'))
     controller_server_params = os.path.join(ic120_navigation_dir, 'parameters','controller_server_params.yaml')
@@ -34,19 +32,19 @@ def generate_launch_description():
     smoother_server_params = LaunchConfiguration('smoother_server_params', default=os.path.join(ic120_navigation_dir, 'parameters','smoother_server_params.yaml'))
     velocity_smoother_params = LaunchConfiguration('velocity_smoother_params', default=os.path.join(ic120_navigation_dir, 'parameters','velocity_smoother_params.yaml'))
     waypoint_follower_params = LaunchConfiguration('waypoint_follower_params', default=os.path.join(ic120_navigation_dir, 'parameters','waypoint_follower_params.yaml'))
-    
+
 
     ic120_rviz_config = LaunchConfiguration('rviz_config_file', default=os.path.join(ic120_navigation_dir, 'rviz','nav2_default_view.rviz'))
-    param_dir=LaunchConfiguration('params_file', default=os.path.join(ic120_navigation_dir, 'params','navigation_parameters_3.yaml'))
-    map_yaml_file=LaunchConfiguration('map', default=os.path.join(ic120_navigation_dir, 'map', 'map.yaml'))
+    param_dir=LaunchConfiguration('params_file', default=os.path.join(ic120_navigation_dir, 'params','navigation_parameters.yaml'))
     nav2_bringup_dir = os.path.join(get_package_share_directory('nav2_bringup'))
-    nav2_navigation_launch_file_path = os.path.join(nav2_bringup_dir, 'launch' ,'navigation_launch.py')
-    nav2_localization_launch_file_path = os.path.join(nav2_bringup_dir, 'launch' ,'localization_launch.py')
-    nav2_bringup_launch_file_path = os.path.join(nav2_bringup_dir, 'launch' ,'bringup_launch.py')
-    
+    nav2_bringup_launch_file_path = os.path.join(nav2_bringup_dir, 'launch' ,'navigation_launch.py')
+
     doc = xacro.parse(open(xacro_model)) #xacroファイルをurfファイルに変換
     xacro.process_doc(doc)
     params = {'robot_description': doc.toxml()}
+
+    
+    
 
     return LaunchDescription([
 
@@ -60,6 +58,7 @@ def generate_launch_description():
         DeclareLaunchArgument('smoother_server_params', default_value=smoother_server_params),
         DeclareLaunchArgument('velocity_smoother_params', default_value=velocity_smoother_params),
         DeclareLaunchArgument('waypoint_follower_params', default_value=waypoint_follower_params),
+
         
         GroupAction([
             PushRosNamespace(
@@ -73,22 +72,22 @@ def generate_launch_description():
                 output="screen",
                 parameters=[{'odom_frame': "ic120/odom"}]
             ),
-            Node(
-                package='opera_tools',
-                executable='poseStamped2Odometry',
-                name='poseStamped2ground_truth_odom',
-                output="screen",
-                parameters=[{'odom_header_frame': "world",
-                             'odom_child_frame': "ic120_tf/base_link",
-                             'poseStamped_topic_name':"/ic120/base_link/pose",
-                             'odom_topic_name':"/ic120/tracking/ground_truth"}]
-            ),
-            Node(
-                package='robot_state_publisher',
-                executable='robot_state_publisher',
-                output="screen",
-                parameters=[params]
-            ),
+            # Node(
+            #     package='opera_tools',
+            #     executable='poseStamped2Odometry',
+            #     name='poseStamped2ground_truth_odom',
+            #     output="screen",
+            #     parameters=[{'odom_header_frame': "world",
+            #                  'odom_child_frame': "ic120_tf/base_link",
+            #                  'poseStamped_topic_name':"/ic120/base_link/pose",
+            #                  'odom_topic_name':"/ic120/tracking/ground_truth"}]
+            # ),
+            # Node(
+            #     package='robot_state_publisher',
+            #     executable='robot_state_publisher',
+            #     output="screen",
+            #     parameters=[params]
+            # ),
             # Node(
             #     package='robot_localization',
             #     executable='ekf_node',
@@ -104,31 +103,11 @@ def generate_launch_description():
             #                  'base_link_frame' : "ic120_tf/base_link"}],
             # ),
             # IncludeLaunchDescription(
-            #    PythonLaunchDescriptionSource(nav2_navigation_launch_file_path),
-            #    launch_arguments={'use_sim_time': 'True', 
-            #                      'use_respawn' : 'False',
-            #                      'autostart' : 'True',
-            #                      'map' : map_yaml_file,
+            #    PythonLaunchDescriptionSource(nav2_bringup_launch_file_path),
+            #    launch_arguments={'use_sim_time': use_sim_time, 
+            #                      'use_respawn' : 'true',
             #                      'params_file':param_dir}.items(),
             # ),
-            # IncludeLaunchDescription(
-            #    PythonLaunchDescriptionSource(nav2_localization_launch_file_path),
-            #    launch_arguments={'use_sim_time': 'True', 
-            #                      'use_respawn' : 'False',
-            #                      'autostart' : 'True',
-            #                      'map' : map_yaml_file,
-            #                      'params_file':param_dir}.items(),
-            # ),
-        ]),
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(nav2_bringup_launch_file_path),
-            launch_arguments={
-                        'map' : map_yaml_file,
-                        'use_respawn' : 'true',
-                        'use_sim_time': 'true'}.items(),
-        ),
-
-
         #     Node(
         #         package='nav2_controller',
         #         executable='controller_server',
@@ -193,6 +172,7 @@ def generate_launch_description():
         #                                     'velocity_smoother',
         #                                     'behavior_server']}],
         #     ),
-        
+        ]),
+
 
     ])

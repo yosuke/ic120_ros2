@@ -6,14 +6,14 @@
 	<!-- <xacro:include filename="$(find ic120_description)/urdf/materials.xacro" /> -->
 
 	<!-- Base Link -->
-	<link name="/base_link"/>
+	<link name="ic120_tf/base_link"/>
 	<joint name="base_joint" type="fixed">
-		<parent link="/base_link"/>
-		<child link="/body_link"/>
+		<parent link="ic120_tf/base_link"/>
+		<child link="ic120_tf/body_link"/>
 	</joint>
 
 
-	<link name="body_link">
+	<link name="ic120_tf/body_link">
 		<visual>
 			<geometry>
 				<mesh filename="package://ic120_description/meshes/ic120-body.dae"/>
@@ -33,30 +33,30 @@
 	<joint name="sprocket_left_joint" type="continuous">
 		<origin xyz="-2.35 1 0.65"/>
 		<axis xyz="0 1 0"/>
-		<parent link="body_link"/>
-		<child link="left_sprocket_link"/>
+		<parent link="ic120_tf/body_link"/>
+		<child link="ic120_tf/left_sprocket_link"/>
 	</joint>
-	<link name="left_sprocket_link"/>
+	<link name="ic120_tf/left_sprocket_link"/>
 
 	<!-- right sprocket axis -->
 	<joint name="sprocket_right_joint" type="continuous">
 		<origin xyz="-2.35 -1 0.65"/>
 		<axis xyz="0 1 0"/>
-		<parent link="body_link"/>
-		<child link="right_sprocket_link"/>
+		<parent link="ic120_tf/body_link"/>
+		<child link="ic120_tf/right_sprocket_link"/>
 	</joint>
-	<link name="right_sprocket_link"/>
+	<link name="ic120_tf/right_sprocket_link"/>
 
 	<!-- bucket axis -->
 	<joint name="vessel_pin_joint" type="revolute">
 		<origin xyz="-3.0153 0 0.94605"/>
 		<axis xyz="0 1 0"/>
-		<parent link="body_link"/>
-		<child link="vessel_pin_link"/>
+		<parent link="ic120_tf/body_link"/>
+		<child link="ic120_tf/vessel_pin_link"/>
 		<limit lower="${-radians(65)}" upper="0" effort="30" velocity="6.159937255"/>
 	</joint>
 
-	<link name="vessel_pin_link">
+	<link name="ic120_tf/vessel_pin_link">
 		<visual>
 			<geometry>
 				<mesh filename="package://ic120_description/meshes/ic120-vessel.dae"/>
@@ -75,13 +75,13 @@
 	<joint name="cylinder_head_joint" type="continuous">
 		<origin xyz="-0.75792 0 0.73083"/>
 		<axis xyz="0 1 0"/>
-		<parent link="body_link"/>
-		<child link="cylinder_head_link"/>
+		<parent link="ic120_tf/body_link"/>
+		<child link="ic120_tf/cylinder_head_link"/>
 		<mimic joint="vessel_pin_joint" multiplier="${radians(5.72)/radians(-65)}"/>
 	</joint>
 
 
-	<link name="cylinder_head_link">
+	<link name="ic120_tf/cylinder_head_link">
 		<visual>
 			<geometry>
 				<mesh filename="package://ic120_description/meshes/ic120-cylinder1.dae"/>
@@ -99,15 +99,15 @@
 	<!-- cylinder inner prismatic joint -->
 	<joint name="cylinder_rod_prismatic_joint" type="prismatic">
 		<origin xyz="0 0 0"/>
-		<parent link="cylinder_head_link"/>
-		<child link="cylinder_rod_link"/>
+		<parent link="ic120_tf/cylinder_head_link"/>
+		<child link="ic120_tf/cylinder_rod_link"/>
 		<axis xyz="-1.4989 0 0.51788"/>
 		<limit lower="-1" upper="1" effort="30" velocity="6.159937255"/>
 		<mimic joint="vessel_pin_joint" multiplier="${0.8/radians(-65)}"/>
 	</joint>
 
 
-	<link name="cylinder_rod_link">
+	<link name="ic120_tf/cylinder_rod_link">
 		<visual>
 			<geometry>
 				<mesh filename="package://ic120_description/meshes/ic120-cylinder2.dae"/>

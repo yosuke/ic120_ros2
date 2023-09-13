@@ -27,13 +27,11 @@ def generate_launch_description():
     rviz_config = os.path.join(ic120_unity_dir, "rviz2", "ic120_standby.rviz")
     nav2_bringup_launch_file_path=os.path.join(ic120_unity_dir,"launch","bringup_launch.py")
     ic120_ekf_yaml = LaunchConfiguration('ekf_yaml_file', default=os.path.join(get_package_share_directory('ic120_navigation'), 'config', 'ic120_ekf.yaml'))
-    param_dir=os.path.join(ic120_navigation_dir, 'params','navigation_parameters_3.yaml')
     map_yaml_file=LaunchConfiguration('map', default=os.path.join(ic120_navigation_dir, 'map', 'map.yaml'))
-    params_file = os.path.join(ic120_navigation_dir, 'params', 'navigation_parameters_3.yaml')
+    params_file = os.path.join(ic120_navigation_dir, 'params', 'navigation_parameters.yaml')
 
     lifecycle_nodes_localization = [
-                    'map_server',
-                    'amcl']
+                    'map_server']
     
     lifecycle_nodes_navigation = [
                     'controller_server',
@@ -99,20 +97,20 @@ def generate_launch_description():
                                 'poseStamped_topic_name':"/ic120/base_link/pose",
                                 'odom_topic_name':"/ic120/tracking/ground_truth"}]
             ),
-            # Node(
-            #     package='robot_localization',
-            #     executable='ekf_node',
-            #     name="ekf_global",
-            #     output="screen",
-            #     remappings=[('odometry/filtered', '/ic120/odometry/global'),
-            #                 ('odom0', '/ic120/odom'),
-            #                 ('odom1', '/ic120/tracking/ground_truth')],
-            #     parameters=[ic120_ekf_yaml,
-            #                 {'map_frame' : "map",
-            #                  'world_frame' : "map",
-            #                  'odom_frame' : "ic120_tf/odom",
-            #                  'base_link_frame' : "ic120_tf/base_link"}],
-            # ),
+            Node(
+                package='robot_localization',
+                executable='ekf_node',
+                name="ekf_global",
+                output="screen",
+                remappings=[('odometry/filtered', '/ic120/odometry/global'),
+                            ('odom0', '/ic120/odom'),
+                            ('odom1', '/ic120/tracking/ground_truth')],
+                parameters=[ic120_ekf_yaml,
+                            {'map_frame' : "map",
+                             'world_frame' : "map",
+                             'odom_frame' : "ic120_tf/odom",
+                             'base_link_frame' : "ic120_tf/base_link"}],
+            ),
 
             Node(
                 package='robot_state_publisher',
@@ -140,15 +138,15 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 remappings=remappings_ic120_tf),
-            Node(
-                package='nav2_amcl',
-                executable='amcl',
-                name='amcl',
-                output='screen',
-                respawn=use_respawn,
-                respawn_delay=2.0,
-                parameters=[configured_params],
-                remappings=remappings_ic120_tf),
+            # Node(
+            #     package='nav2_amcl',
+            #     executable='amcl',
+            #     name='amcl',
+            #     output='screen',
+            #     respawn=use_respawn,
+            #     respawn_delay=2.0,
+            #     parameters=[configured_params],
+            #     remappings=remappings_ic120_tf),
             
             Node(
                     package='nav2_lifecycle_manager',

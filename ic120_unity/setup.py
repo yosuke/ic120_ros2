@@ -16,6 +16,7 @@ setup(
         (os.path.join('share', package_name, 'launch'),glob('launch/*launch.py')),
         (os.path.join('share', package_name, 'rviz2'),glob('rviz2/*.rviz')),
         (os.path.join('share', package_name, 'config'),glob('config/*.rviz')),
+        (os.path.join('share', package_name, 'ic120_untiy'),glob('ic120_unity/*.py')),
  
     ],
     install_requires=['setuptools'],
@@ -25,6 +26,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'convert_goal_pose = ic120_unity.convert_goal_pose:main',
+            'convert_initial_pose = ic120_unity.convert_initial_pose:main'
         ],
     },
 )

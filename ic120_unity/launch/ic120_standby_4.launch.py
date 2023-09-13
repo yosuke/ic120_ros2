@@ -32,8 +32,7 @@ def generate_launch_description():
     params_file = os.path.join(ic120_navigation_dir, 'params', 'navigation_parameters_3.yaml')
 
     lifecycle_nodes_localization = [
-                    'map_server',
-                    'amcl']
+                    'map_server']
     
     lifecycle_nodes_navigation = [
                     'controller_server',
@@ -50,11 +49,15 @@ def generate_launch_description():
     
     configured_params = RewrittenYaml(
             source_file=params_file,
+            root_key='ic120',
             param_rewrites=param_substitutions,
             convert_types=True)
     
     remappings = [('/tf', 'tf'),
                   ('/tf_static', 'tf_static')]
+    
+    remappings_ic120_tf=[('/ic120/tf','tf'),
+                         ('/ic120/tf_static', 'tf_static')]
     
     xacro_model = os.path.join(ic120_description_dir, "urdf", "ic120.xacro")
     doc = xacro.parse(open(xacro_model)) #xacroファイルをurfファイルに変換
@@ -63,10 +66,10 @@ def generate_launch_description():
     
     return LaunchDescription([
 
-        #GroupAction([
-        #    PushRosNamespace(
-        #        condition=IfCondition(use_namespace),
-        #        namespace=robot_name),
+        GroupAction([
+            PushRosNamespace(
+                condition=IfCondition(use_namespace),
+                namespace=robot_name),
             Node(
                 package='tf2_ros',
                 executable='static_transform_publisher',
@@ -95,27 +98,27 @@ def generate_launch_description():
                                 'poseStamped_topic_name':"/ic120/base_link/pose",
                                 'odom_topic_name':"/ic120/tracking/ground_truth"}]
             ),
-            # Node(
-            #     package='robot_localization',
-            #     executable='ekf_node',
-            #     name="ekf_global",
-            #     output="screen",
-            #     remappings=[('odometry/filtered', '/ic120/odometry/global'),
-            #                 ('odom0', '/ic120/odom'),
-            #                 ('odom1', '/ic120/tracking/ground_truth')],
-            #     parameters=[ic120_ekf_yaml,
-            #                 {'map_frame' : "map",
-            #                  'world_frame' : "map",
-            #                  'odom_frame' : "ic120_tf/odom",
-            #                  'base_link_frame' : "ic120_tf/base_link"}],
-            # ),
+            Node(
+                package='robot_localization',
+                executable='ekf_node',
+                name="ekf_global",
+                output="screen",
+                remappings=[('odometry/filtered', '/ic120/odometry/global'),
+                            ('odom0', '/ic120/odom'),
+                            ('odom1', '/ic120/tracking/ground_truth')],
+                parameters=[ic120_ekf_yaml,
+                            {'map_frame' : "map",
+                             'world_frame' : "map",
+                             'odom_frame' : "ic120_tf/odom",
+                             'base_link_frame' : "ic120_tf/base_link"}],
+            ),
 
             Node(
                 package='robot_state_publisher',
                 executable='robot_state_publisher',
                 output="screen",
-                namespace="ic120",
-                parameters=[params]
+                parameters=[params],
+                remappings=remappings_ic120_tf,
             ),
             Node(
                 condition=IfCondition('true'),
@@ -123,7 +126,7 @@ def generate_launch_description():
                 package='rclcpp_components',
                 executable='component_container_isolated',
                 parameters=[configured_params, {'autostart': True}],
-                remappings=remappings,
+                remappings=remappings_ic120_tf,
                 output='screen'),
             
             # Localization packages
@@ -135,16 +138,16 @@ def generate_launch_description():
                 respawn=use_respawn,
                 respawn_delay=2.0,
                 parameters=[configured_params],
-                remappings=remappings),
-            Node(
-                package='nav2_amcl',
-                executable='amcl',
-                name='amcl',
-                output='screen',
-                respawn=use_respawn,
-                respawn_delay=2.0,
-                parameters=[configured_params],
-                remappings=remappings),
+                remappings=remappings_ic120_tf),
+            # Node(
+            #     package='nav2_amcl',
+            #     executable='amcl',
+            #     name='amcl',
+            #     output='screen',
+            #     respawn=use_respawn,
+            #     respawn_delay=2.0,
+            #     parameters=[configured_params],
+            #     remappings=remappings_ic120_tf),
             
             Node(
                     package='nav2_lifecycle_manager',
@@ -163,7 +166,7 @@ def generate_launch_description():
                 respawn=use_respawn,
                 respawn_delay=2.0,
                 parameters=[configured_params],
-                remappings=remappings + [('cmd_vel', 'cmd_vel_nav')]),
+                remappings=remappings_ic120_tf + [('cmd_vel', 'cmd_vel_nav')]),
             Node(
                 package='nav2_smoother',
                 executable='smoother_server',
@@ -172,7 +175,7 @@ def generate_launch_description():
                 respawn=use_respawn,
                 respawn_delay=2.0,
                 parameters=[configured_params],
-                remappings=remappings),
+                remappings=remappings_ic120_tf),
             Node(
                 package='nav2_planner',
                 executable='planner_server',
@@ -181,7 +184,7 @@ def generate_launch_description():
                 respawn=use_respawn,
                 respawn_delay=2.0,
                 parameters=[configured_params],
-                remappings=remappings),
+                remappings=remappings_ic120_tf),
             Node(
                 package='nav2_behaviors',
                 executable='behavior_server',
@@ -190,7 +193,8 @@ def generate_launch_description():
                 respawn=use_respawn,
                 respawn_delay=2.0,
                 parameters=[configured_params],
-                remappings=remappings),
+                remappings=remappings_ic120_tf +
+                           [('cmd_vel', 'tracks/cmd_vel')]),
             Node(
                 package='nav2_bt_navigator',
                 executable='bt_navigator',
@@ -199,7 +203,7 @@ def generate_launch_description():
                 respawn=use_respawn,
                 respawn_delay=2.0,
                 parameters=[configured_params],
-                remappings=remappings),
+                remappings=remappings_ic120_tf),
             Node(
                 package='nav2_waypoint_follower',
                 executable='waypoint_follower',
@@ -208,7 +212,7 @@ def generate_launch_description():
                 respawn=use_respawn,
                 respawn_delay=2.0,
                 parameters=[configured_params],
-                remappings=remappings),
+                remappings=remappings_ic120_tf),
             Node(
                 package='nav2_velocity_smoother',
                 executable='velocity_smoother',
@@ -217,8 +221,9 @@ def generate_launch_description():
                 respawn=use_respawn,
                 respawn_delay=2.0,
                 parameters=[configured_params],
-                remappings=remappings +
-                        [('cmd_vel', 'cmd_vel_nav'), ('cmd_vel_smoothed', 'cmd_vel')]),
+                remappings=remappings_ic120_tf +
+                        [('cmd_vel', 'cmd_vel_nav'), 
+                         ('cmd_vel_smoothed', 'tracks/cmd_vel')]),
             Node(
                 package='nav2_lifecycle_manager',
                 executable='lifecycle_manager',
@@ -235,5 +240,5 @@ def generate_launch_description():
                 name="rviz",
                 arguments=["--display-config", rviz_config],
             ),
-        #])
+        ])
     ])

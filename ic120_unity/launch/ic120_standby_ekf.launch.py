@@ -51,8 +51,8 @@ def generate_launch_description():
             param_rewrites=param_substitutions,
             convert_types=True)
     
-    remappings = [('/tf', 'tf'),
-                  ('/tf_static', 'tf_static')]
+    #remappings = [('/tf', 'tf'),
+    #              ('/tf_static', 'tf_static')]
     
     remappings_ic120_tf=[('/ic120/tf','tf'),
                          ('/ic120/tf_static', 'tf_static')]
@@ -79,12 +79,26 @@ def generate_launch_description():
                 package='tf2_ros',
                 executable='static_transform_publisher',
                 name='world_to_map',
-                arguments=['0', '0', '0', '0', '0', '0', 'world', 'map']),
+                arguments=['--x','0', 
+                           '--y','0', 
+                           '--z','0', 
+                           '--roll','0', 
+                           '--pitch','0', 
+                           '--yaw','0', 
+                           '--frame-id', 'world',
+                           '--child-frame-id', 'map']),
             Node(
                 package='tf2_ros',
                 executable='static_transform_publisher',
                 name='map_to_odom',
-                arguments=['0', '3', '0', '0', '0', '0', 'map', 'ic120_tf/odom']),
+                arguments=['--x','0', 
+                           '--y','3', 
+                           '--z','0', 
+                           '--roll','0', 
+                           '--pitch','0', 
+                           '--yaw','0', 
+                           '--frame-id', 'map',
+                           '--child-frame-id', 'ic120_tf/odom']), 
             Node(
                 package='opera_tools',
                 executable='odom_broadcaster',
@@ -105,12 +119,6 @@ def generate_launch_description():
                 output="screen",
                 parameters=[params],
                 remappings=remappings_ic120_tf),   
-            Node(
-                package="rviz2",
-                executable="rviz2",
-                name="rviz",
-                arguments=["--display-config", ic120_standby_rviz_file],
-            ),
             Node(
                 condition=IfCondition('true'),
                 name='nav2_container',
@@ -232,6 +240,12 @@ def generate_launch_description():
                 parameters=[{'use_sim_time': use_sim_time},
                             {'autostart': use_autostart},
                             {'node_names': lifecycle_nodes_navigation}]),
+
+            Node(
+                package="rviz2",
+                executable="rviz2",
+                name="rviz",
+                arguments=["--display-config", ic120_standby_rviz_file]),
             
         ])
     ])

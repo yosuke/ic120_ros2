@@ -32,7 +32,6 @@ def generate_launch_description():
                 package='robot_state_publisher',
                 executable='robot_state_publisher',
                 output="screen",
-                namespace=robot_name,
                 parameters=[params]
             ),
             Node(
@@ -41,7 +40,6 @@ def generate_launch_description():
                 name="rviz_ic120",
                 arguments=["--display-config", rviz_config],
                 output="screen",
-                parameters=[{"tf_prefix":'ic120_tf'}],
             ),
         ]),
     ])

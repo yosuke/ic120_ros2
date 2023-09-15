@@ -16,8 +16,6 @@ setup(
         (os.path.join('share', package_name, 'launch'),glob('launch/*.launch.py')),
         (os.path.join('share', package_name, 'map'),glob('map/*.pgm')),
         (os.path.join('share', package_name, 'map'),glob('map/*.yaml')),
-        (os.path.join('share', package_name, 'params', 'map_nav_params'),glob('params/map_nav_params/*.yaml')),
-        (os.path.join('share', package_name, 'params', 'odom_nav_params'),glob('params/odom_nav_params/*.yaml')),
         (os.path.join('share', package_name, 'params'),glob('params/*.yaml')),
         (os.path.join('share', package_name, 'parameters'),glob('parameters/*.yaml')),
         (os.path.join('share', package_name, 'rviz'),glob('rviz/*.rviz')),

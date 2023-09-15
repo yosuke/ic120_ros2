@@ -24,7 +24,7 @@ Panels:
       - /Current View1
     Name: Views
     Splitter Ratio: 0.5
-  - Class: rviz_default_plugins/Time
+  - Class: rviz_common/Time
     Experimental: false
     Name: Time
     SyncMode: 0
@@ -359,8 +359,7 @@ Visualization Manager:
                     {}
                   zx120/left_middle_wheel_link:
                     {}
-                  zx
-      Position Transformer: XY20/left_rear_wheel_link:
+                  zx120/left_rear_wheel_link:
                     {}
                   zx120/right_front_wheel_link:
                     {}
@@ -589,9 +588,7 @@ Visualization Manager:
   Tools:
     - Class: rviz_default_plugins/Interact
       Hide Inactive Objects: true
-    - Class: rviz_default_plugins/MoveCamera
     - Class: rviz_default_plugins/Select
-    - Class: rviz_default_plugins/FocusCamera
     - Class: rviz_default_plugins/Measure
     - Class: rviz_default_plugins/SetInitialPose
       Theta std deviation: 0.2617993950843811

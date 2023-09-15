@@ -9,7 +9,7 @@ import xacro
 
 #plane=9
 robot_name="ic120"
-use_namespace="true"
+use_namespace=True
 
 def generate_launch_description():
     
@@ -45,7 +45,7 @@ def generate_launch_description():
 
         GroupAction([
             PushRosNamespace(
-                condition=IfCondition(use_namespace),
+                condition=IfCondition(str(use_namespace)),
                 namespace=robot_name),
 
             DeclareLaunchArgument('robot_name', default_value=robot_name,),
@@ -67,7 +67,6 @@ def generate_launch_description():
                 package='robot_state_publisher',
                 executable='robot_state_publisher',
                 name='robot_state_publisher',
-                namespace=robot_name + '_tf',
                 parameters=[params]
             ),
             IncludeLaunchDescription(

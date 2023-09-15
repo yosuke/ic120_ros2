@@ -8,15 +8,15 @@ from launch.conditions import IfCondition
 import xacro
 
 robot_name="ic120"
-use_namespace="true"
+use_namespace=True
+use_gui=True
 
 def generate_launch_description():
     ic120_navigation_dir=get_package_share_directory("ic120_navigation")
-    ic120_ekf_yaml = os.path.join(ic120_navigation_dir, 'config', 'ic120_ekf.yaml')
-    xacro_model = os.path.join(get_package_share_directory("ic120_description"), "urdf", "ic120.xacro")
-    rviz_config = os.path.join(ic120_navigation_dir, "rviz", "zx120_ic120_demo.rviz")
+    ic120_xacro_file = os.path.join(get_package_share_directory("ic120_description"), "urdf", "ic120.xacro")
+    zx120_ic120_demo_rviz_file = os.path.join(ic120_navigation_dir, "rviz", "zx120_ic120_demo.rviz")
 
-    doc = xacro.parse(open(xacro_model))
+    doc = xacro.parse(open(ic120_xacro_file))
     xacro.process_doc(doc)
     params = {'robot_description': doc.toxml()}
 
@@ -25,39 +25,33 @@ def generate_launch_description():
         DeclareLaunchArgument('robot_name', default_value='ic120'),
         
         GroupAction([
+
+            DeclareLaunchArgument('use_gui', default_value='true'),
+
             PushRosNamespace(
-                condition=IfCondition(use_namespace),
+                condition=IfCondition(str(use_namespace)),
                 namespace=robot_name),
 
             Node(
                 package='ic120_navigation',
                 executable='dump_navigation',
                 name='dump_nav',
-                output="screen",  
-            ),
+                output="screen"),
             Node(
                 package='ic120_navigation',
                 executable='dumpup_srv_server',
-                name='dumpup_server'  
-            ),
-            
-            DeclareLaunchArgument('use_gui', default_value='true'),
-            DeclareLaunchArgument('config',  default_value='robot'),
-            
+                name='dumpup_server'),
             Node(
                 package='robot_state_publisher',
                 executable='robot_state_publisher',
                 output="screen",
-                namespace=robot_name,
-                parameters=[params]
-            ),
+                parameters=[params]),
             Node(
                 package="rviz2",
                 executable="rviz2",
                 name="rviz_ic120_nav_demo",
-                arguments=["--display-config", rviz_config],
+                arguments=["--display-config", zx120_ic120_demo_rviz_file],
                 output="screen",
-                condition=IfCondition(LaunchConfiguration('use_gui')),
-            ),
+                condition=IfCondition(LaunchConfiguration('use_gui'))),
         ]),
     ])

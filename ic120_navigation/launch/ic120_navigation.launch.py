@@ -1,87 +1,171 @@
 import os
+
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
+from launch_ros.actions import Node, PushRosNamespace
+from launch.actions import GroupAction
 from launch.substitutions import LaunchConfiguration
-from launch_ros.actions import Node
-from launch.actions import DeclareLaunchArgument
-import xacro
+from nav2_common.launch import RewrittenYaml
+from launch.conditions import IfCondition
+
 
 robot_name="ic120"
+use_autostart=True
+use_sim_time=True
+use_respawn=True
+use_namespace=True
 
 def generate_launch_description():
-    ic120_description_dir=get_package_share_directory("ic120_description")
-    ic120_navigation_dir=get_package_share_directory("ic120_navigation")
-    xacro_model = os.path.join(ic120_description_dir, "urdf", "ic120.xacro")
-    
-    bringup_dir=get_package_share_directory("nav2_bringup")
-    launch_dir = os.path.join(bringup_dir, 'launch')
 
-    ic120_ekf_yaml = LaunchConfiguration('ekf_yaml_file', default=os.path.join(ic120_navigation_dir, 'config', 'ic120_ekf.yaml'))
-    map_nav_global_costmap_params_yaml = LaunchConfiguration('global_costmap_yaml_file', default=os.path.join(ic120_navigation_dir, 'params','map_nav_params', 'global_costmap_params.yaml'))
-    map_nav_local_costmap_params_yaml = LaunchConfiguration('local_costmap_yaml_file', default=os.path.join(ic120_navigation_dir ,'params','map_nav_params', 'local_costmap_params.yaml'))
-    global_costmap_params_yaml = LaunchConfiguration('global_costmap_yaml_file', default=os.path.join(ic120_navigation_dir, 'params','odom_nav_params', 'global_costmap_params.yaml'))
-    local_costmap_params_yaml = LaunchConfiguration('local_costmap_yaml_file', default=os.path.join(ic120_navigation_dir, 'params','odom_nav_params', 'local_costmap_params.yaml'))
-    base_local_planner_params_yaml = LaunchConfiguration('base_local_planner_yaml_file', default=os.path.join(ic120_navigation_dir, 'params', 'base_local_planner_params.yaml'))
-    base_global_planner_params_yaml = LaunchConfiguration('base_global_planner_yaml_file', default=os.path.join(ic120_navigation_dir, 'params', 'base_global_planner_params.yaml'))
-    costmap_common_params_yaml = LaunchConfiguration('costmap_common_yaml_file', default=os.path.join(ic120_navigation_dir, 'costmap_common_params.yaml'))
-    move_base_params_yaml = LaunchConfiguration('move_base_yaml_file', default=os.path.join(ic120_navigation_dir, 'params','move_base_params.yaml'))
-    
-    doc = xacro.parse(open(xacro_model)) 
-    xacro.process_doc(doc)
-    params = {'robot_description': doc.toxml()}
+    ic120_navigation_dir=get_package_share_directory('ic120_navigation')
 
+    navigation_parameters_yaml_file = os.path.join(ic120_navigation_dir, 'params', 'navigation_parameters.yaml')
+
+    map_yaml_file=LaunchConfiguration('map', default=os.path.join(ic120_navigation_dir, 'map', 'map.yaml'))
+
+    lifecycle_nodes_localization = [
+                   'map_server']
+    
+    lifecycle_nodes_navigation = [
+                    'controller_server',
+                    'smoother_server',
+                    'planner_server',
+                    'behavior_server',
+                    'bt_navigator',
+                    'waypoint_follower',
+                    'velocity_smoother']
+    
+    param_substitutions = {
+        'use_sim_time': str(use_sim_time),
+        'yaml_filename': map_yaml_file}
+    
+    configured_params = RewrittenYaml(
+            source_file=navigation_parameters_yaml_file,
+            root_key='ic120',
+            param_rewrites=param_substitutions,
+            convert_types=True)
+    
+    #remappings = [('/tf', 'tf'),
+    #              ('/tf_static', 'tf_static')]
+    
+    remappings_ic120_tf=[('/ic120/tf','tf'),
+                         ('/ic120/tf_static', 'tf_static')]
+    
     return LaunchDescription([
 
-        DeclareLaunchArgument('robot_name', default_value='ic120'),
-        DeclareLaunchArgument('ic120_ekf_yaml', default_value=ic120_ekf_yaml),
-        DeclareLaunchArgument('map_nav_global_costmap_params_yaml', default_value=map_nav_global_costmap_params_yaml),
-        DeclareLaunchArgument('map_nav_local_costmap_params_yaml', default_value=map_nav_local_costmap_params_yaml),
-        DeclareLaunchArgument('global_costmap_params_yaml', default_value=global_costmap_params_yaml),
-        DeclareLaunchArgument('odom_nav_local_costmap_params_yaml', default_value=local_costmap_params_yaml),
-        DeclareLaunchArgument('base_local_planner_params_yaml', default_value=base_local_planner_params_yaml),
-        DeclareLaunchArgument('base_global_planner_params_yaml', default_value=base_global_planner_params_yaml), 
-        DeclareLaunchArgument('costmap_common_params_yaml', default_value=costmap_common_params_yaml),
-        DeclareLaunchArgument('move_base_params_yaml', default_value=move_base_params_yaml),
-        
-        # local costmap
-        Node(
-            package='nav2_costmap_2d',
-            executable='nav2_costmap_2d',
-            name = 'local_costmap',
-            output="screen",
-            parameters = [local_costmap_params_yaml]
-        ),
-        # global costmap
-        Node(
-            package='nav2_map_server',
-            executable='map_server',
-            name = 'global_costmap',
-            output="screen",
-            parameters = [global_costmap_params_yaml]
-        ),
-        # local planner
-        Node(
-            package='nav2_controller',
-            executable='controller_server',
-            name='base_local_planner',
-            output="screen",
-            parameters=[base_local_planner_params_yaml],
-        ),
-        #global planner
-        Node(
-            package='nav2_planner',
-            executable='planner_server',
-            name='base_global_planner',
-            output="screen",
-            parameters=[base_global_planner_params_yaml],
-        ),
-        Node(
-           package='nav2_lifecycle_manager',
-           executable='lifecycle_manager',
-           name='nav2_lifecycle_manager',
-           output='screen',
-           parameters=[{'autostart': True},
-                       {'node_names': ['local_costmap','global_costmap','base_local_planner', 'base_global_planner']}],
-        ),
+        GroupAction([
+            PushRosNamespace(
+                condition=IfCondition(str(use_namespace)),
+                namespace=robot_name),
 
+            Node(
+                condition=IfCondition('true'),
+                name='nav2_container',
+                package='rclcpp_components',
+                executable='component_container_isolated',
+                parameters=[configured_params, {'autostart': use_autostart}],
+                remappings=remappings_ic120_tf,
+                output='screen'),
+            
+            #########################
+            # Localization packages #
+            #########################
+
+            Node(
+                package='nav2_map_server',
+                executable='map_server',
+                name='map_server',
+                output='screen',
+                respawn=use_respawn,
+                respawn_delay=2.0,
+                parameters=[configured_params],
+                remappings=remappings_ic120_tf),
+            Node(
+                package='nav2_lifecycle_manager',
+                executable='lifecycle_manager',
+                name='lifecycle_manager_localization',
+                output='screen',
+                parameters=[{'use_sim_time': use_sim_time},
+                            {'autostart': use_autostart},
+                            {'node_names': lifecycle_nodes_localization}]),
+
+            #######################
+            # Navigation packages #
+            #######################
+
+            Node(
+                package='nav2_controller',
+                executable='controller_server',
+                output='screen',
+                respawn=use_respawn,
+                respawn_delay=2.0,
+                parameters=[configured_params],
+                remappings=remappings_ic120_tf + [('cmd_vel', 'cmd_vel_nav')]),
+            Node(
+                package='nav2_smoother',
+                executable='smoother_server',
+                name='smoother_server',
+                output='screen',
+                respawn=use_respawn,
+                respawn_delay=2.0,
+                parameters=[configured_params],
+                remappings=remappings_ic120_tf),
+            Node(
+                package='nav2_planner',
+                executable='planner_server',
+                name='planner_server',
+                output='screen',
+                respawn=use_respawn,
+                respawn_delay=2.0,
+                parameters=[configured_params],
+                remappings=remappings_ic120_tf),
+            Node(
+                package='nav2_behaviors',
+                executable='behavior_server',
+                name='behavior_server',
+                output='screen',
+                respawn=use_respawn,
+                respawn_delay=2.0,
+                parameters=[configured_params],
+                remappings=remappings_ic120_tf +
+                           [('cmd_vel', 'tracks/cmd_vel')]),
+            Node(
+                package='nav2_bt_navigator',
+                executable='bt_navigator',
+                name='bt_navigator',
+                output='screen',
+                respawn=use_respawn,
+                respawn_delay=2.0,
+                parameters=[configured_params],
+                remappings=remappings_ic120_tf+[('ic120/goal_pose','goal_pose')]),
+            Node(
+                package='nav2_waypoint_follower',
+                executable='waypoint_follower',
+                name='waypoint_follower',
+                output='screen',
+                respawn=use_respawn,
+                respawn_delay=2.0,
+                parameters=[configured_params],
+                remappings=remappings_ic120_tf),
+            Node(
+                package='nav2_velocity_smoother',
+                executable='velocity_smoother',
+                name='velocity_smoother',
+                output='screen',
+                respawn=use_respawn,
+                respawn_delay=2.0,
+                parameters=[configured_params],
+                remappings=remappings_ic120_tf +
+                        [('cmd_vel', 'cmd_vel_nav'), 
+                         ('cmd_vel_smoothed', 'tracks/cmd_vel')]),
+            Node(
+                package='nav2_lifecycle_manager',
+                executable='lifecycle_manager',
+                name='lifecycle_manager_navigation',
+                output='screen',
+                parameters=[{'use_sim_time': use_sim_time},
+                            {'autostart': use_autostart},
+                            {'node_names': lifecycle_nodes_navigation}]),
+            
+        ])
     ])

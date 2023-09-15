@@ -184,6 +184,7 @@ local_costmap:
     ros__parameters:
       #Costmap2D paraneters
       always_send_full_costmap: True
+      use_sim_time: True
       footprint_padding: 0.5
       global_frame: ic120_tf/odom
       height: 20
@@ -253,6 +254,7 @@ global_costmap:
     ros__parameters:
       #Costmap2D paraneters
       always_send_full_costmap: True
+      use_sim_time: True
       footprint_padding: 0.5
       global_frame: map
       height: 100

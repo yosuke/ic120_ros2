@@ -50,8 +50,8 @@ def generate_launch_description():
             param_rewrites=param_substitutions,
             convert_types=True)
     
-    remappings = [('/tf', 'tf'),
-                  ('/tf_static', 'tf_static')]
+    # remappings = [('/tf', 'tf'),
+    #               ('/tf_static', 'tf_static')]
     
     remappings_ic120_tf=[('/ic120/tf','tf'),
                          ('/ic120/tf_static', 'tf_static')]
@@ -104,19 +104,20 @@ def generate_launch_description():
                            '--frame-id', 'map',
                            '--child-frame-id', 'ic120_tf/odom']), 
             Node(
-                package='opera_tools',
+                package='ic120_navigation',
                 executable='odom_broadcaster',
                 name='odom_broadcaster',
                 output="screen"),
             Node(
-                package='opera_tools',
+                package='ic120_navigation',
                 executable='poseStamped2Odometry',
                 name='poseStamped2ground_truth_odom',
                 output="screen",
                 parameters=[{'odom_header_frame': "world",
                                 'odom_child_frame': "ic120_tf/base_link",
                                 'poseStamped_topic_name':"/ic120/base_link/pose",
-                                'odom_topic_name':"/ic120/tracking/ground_truth"}]),
+                                'odom_topic_name':"/ic120/tracking/ground_truth",
+                                'use_real_time':False}]),
             Node(
                 package='robot_state_publisher',
                 executable='robot_state_publisher',

@@ -28,11 +28,13 @@ class PoseToOdom(Node):
         self.declare_parameter('odom_child_frame',"ic120_tf/base_link")
         self.declare_parameter('poseStamped_topic_name',"/ic120/base_link/pose")
         self.declare_parameter('odom_topic_name',"/ic120/tracking/ground_truth")
+        self.declare_parameter('use_real_time',True)
 
         self.odom_header_frame = self.get_parameter('odom_header_frame').get_parameter_value().string_value
         self.odom_child_frame = self.get_parameter('odom_child_frame').get_parameter_value().string_value
         self.poseStamped_topic_name = self.get_parameter('poseStamped_topic_name').get_parameter_value().string_value
         self.odom_topic_name = self.get_parameter('odom_topic_name').get_parameter_value().string_value
+        self.use_real_time = self.get_parameter('use_real_time').get_parameter_value().bool_value
 
         self.vicon_sub = self.create_subscription(PoseStamped, self.poseStamped_topic_name, self.pose_cb, 10)
         self.odom_pub = self.create_publisher(Odometry, self.odom_topic_name, 10)
@@ -66,7 +68,8 @@ class PoseToOdom(Node):
             odom = Odometry()
             odom.header.frame_id = self.odom_header_frame
             odom.child_frame_id = self.odom_child_frame
-            odom.header.stamp = self.get_clock().now().to_msg()
+            if self.use_real_time == True:
+                odom.header.stamp = self.get_clock().now().to_msg()
             # odom.header.stamp = pose.header.stamp
                 
             odom.pose.pose.position.x = self.pose.pose.position.x

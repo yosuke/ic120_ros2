@@ -35,6 +35,7 @@ setup(
             'dumpup_srv_server = ic120_navigation.dumpup_srv_server:main',
             'nav_srv_server = ic120_navigation.nav_srv_server:main',
             'poseStamped2Odometry = ic120_navigation.poseStamped2Odometry:main',
+            'odom_broadcaster = ic120_navigation.odom_broadcaster:main',
         ],
     },
 )

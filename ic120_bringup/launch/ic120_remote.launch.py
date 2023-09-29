@@ -70,9 +70,9 @@ def generate_launch_description():
             DeclareLaunchArgument('robot_name', default_value=robot_name,),
             #DeclareLaunchArgument('plane', default_value=9,),
 
-            IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(ic120_track_pid_control_launch_file_path),
-            ),
+            # IncludeLaunchDescription(
+            #     PythonLaunchDescriptionSource(ic120_track_pid_control_launch_file_path),
+            # ),
 
             # Node(
             #     package='gnss_poser',

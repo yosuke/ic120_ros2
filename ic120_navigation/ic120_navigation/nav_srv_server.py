@@ -1,15 +1,17 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 import rclpy
 from rclpy.node import Node
-import tf2_ros
+from std_msgs.msg import Bool
+import tf_transformations
+from nav_msgs.msg import Odometry
 import math
-from geometry_msgs.msg import Quaternion
-from geometry_msgs.msg import Vector3
+from geometry_msgs.msg import Quaternion, Vector3, PoseStamped, PoseArray, Pose
 from ic120_msgs.srv import DumpNav
-from geometry_msgs.msg import PoseArray,Pose
-from rclpy.time import Time
-from rclpy.time import Duration
+from tf2_ros import Buffer, TransformListener
+from rclpy.qos import QoSProfile
+
 
 # waypointはworld座標系で記載する
 # X,Y,Theta, orientation_flag, dumpup_flag
@@ -73,63 +75,61 @@ class FakeConstManager(Node):
 
     def __init__(self):
         super().__init__('fake_const_manager')
-        now = self.get_clock().now()
-        self.waypoint_posearray_pub = self.create_publisher(PoseArray, "/ic120/waypoints", 10)
-        self.tfBuffer = tf2_ros.Buffer()
-        listener = tf2_ros.TransformListener(self.tfBuffer, self)
-        #listener.waitForTransform("world", "map", rclpy.Time(0), rclpy.Duration(4.0))
-        transfrom_flg=self.tfBuffer.can_transform(target_frame="world",  source_frame="map", time=Time(seconds=0),timeout=Duration(seconds=4.0))
-        if(transfrom_flg == True):
-            world2map_trans,world2map_rot = self.tfBuffer.lookup_transform(target_frame="world", source_frame="map", time=Time(0))
-            print("World2Map Trans:", world2map_trans[0], world2map_trans[1],  world2map_trans[2])
-            self.waypoint_PoseArray_publisher()
-            self.s = self.create_service(DumpNav, "/ic120/nav_srv", self.server)
-            print("Ready to navigation service client")
+        self.get_logger().info("Start navigation service")
 
-    def euler_to_quaternion(self,euler):
-        quaternion = Quaternion()
-        quaternion.set_euler(euler.x, euler.y, euler.z)
-        return quaternion
-    
-    def waypoint_PoseArray_publisher(self):
+        self.tf_buffer = Buffer()
+        self.tf_listener = TransformListener(self.tf_buffer, self)
+        self.waypoint_posearray_pub = self.create_publisher(PoseArray, "/ic120/waypoints", QoSProfile(depth=10))
+
+        self.srv = self.create_service(DumpNav, "nav_srv", self.server_callback)
+
+        # Wait for the transformation to be available
+        self.get_logger().info("Waiting for 'world' to 'map' transform")
+        self.tf_buffer.can_transform('world', 'map', rclpy.time.Time(), timeout=rclpy.duration.Duration(seconds=4.0))
+
+    def euler_to_quaternion(self, euler):
+        q = tf_transformations.quaternion_from_euler(euler.x, euler.y, euler.z)
+        return Quaternion(x=q[0], y=q[1], z=q[2], w=q[3])
+
+    def waypoint_posearray_publisher(self):
         waypoints_array = PoseArray()
-        waypoints_array.header.frame_id="world"
-        waypoints_array.header.stamp = self.get_clock().now()
+        waypoints_array.header.frame_id = "world"
+        waypoints_array.header.stamp = self.get_clock().now().to_msg()
+
         for waypoint in waypoints:
             waypoint_arrow = Pose()
-            waypoint_arrow.position.x=waypoint[0]
-            waypoint_arrow.position.y=waypoint[1]
-            waypoint_arrow.position.z=world2map_trans[2]
-            waypoint_arrow.orientation=self.euler_to_quaternion(Vector3(0,0,waypoint[2]))    
+            waypoint_arrow.position.x = waypoint[0]
+            waypoint_arrow.position.y = waypoint[1]
+            waypoint_arrow.position.z = 0  # Assuming flat ground, adjust if necessary
+            waypoint_arrow.orientation = self.euler_to_quaternion(Vector3(0, 0, waypoint[2]))
             waypoints_array.poses.append(waypoint_arrow)
-        # print(waypoints_array)
-        rclpy.sleep(1)
+
         self.waypoint_posearray_pub.publish(waypoints_array)
 
-    def server(self,req):
-        print("Get service call for navigation")
-        print("World2Map Trans:", world2map_trans[0], world2map_trans[1])
+    def server_callback(self, request, response):
+        self.get_logger().info("Received service call for navigation")
         global waypoint_num
 
         waypoint = waypoints[waypoint_num]
-        waypoint_num+=1
-        if(waypoint_num>=len(waypoints)):
-            waypoint_num=0
+        waypoint_num += 1
+        if waypoint_num >= len(waypoints):
+            waypoint_num = 0
 
-        print("waypoint:", waypoint_num)
-        print("waypoint Pos:", waypoint[0],waypoint[1],waypoint[2])
+        self.get_logger().info(f"Waypoint: {waypoint_num}, Position: {waypoint[0]}, {waypoint[1]}, {waypoint[2]}")
 
-        response = DumpNav.Response()
-        response.is_ok.data = True
-        response.target_pose.header.frame_id="world"
-        response.target_pose.pose.position.x=waypoint[0] #-world2map_trans[0]
-        response.target_pose.pose.position.y=waypoint[1] #-world2map_trans[1]
-        response.target_pose.pose.position.z=world2map_trans[2]
-        response.target_pose.pose.orientation=self.euler_to_quaternion(Vector3(0,0,waypoint[2]))    
-        response.orientation_flag.data=waypoint[3]
-        response.dump_flag.data=waypoint[4]
+        is_ok_msg = Bool()
+        is_ok_msg.data = True 
+
+        response.is_ok = is_ok_msg
+        response.target_pose.header.frame_id = "world"
+        response.target_pose.pose.position.x = waypoint[0]
+        response.target_pose.pose.position.y = waypoint[1]
+        response.target_pose.pose.position.z = 0.0  # Assuming flat ground, adjust if necessary
+        response.target_pose.pose.orientation = self.euler_to_quaternion(Vector3(0, 0, waypoint[2]))
+        response.orientation_flag = waypoint[3]
+        response.dump_flag = waypoint[4]
+
         return response
-
 
 def main(args=None):
     rclpy.init(args=args)

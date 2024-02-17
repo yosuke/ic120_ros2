@@ -1,12 +1,16 @@
 /ic120/ekf_global:
     ros__parameters:
         # for wheel and imu fusion
+        use_sim_time: true
+        debug: true
         frequency: 10.0
         transform_time_offset: 0.0
         transform_timeout: 0.0
         print_diagnostics: true
         publish_acceleration: true
         print_diagnostics: true
+        publish_tf: true
+        two_d_mode: true
 
         map_frame: map
         odom_frame: ic120_tf/odom

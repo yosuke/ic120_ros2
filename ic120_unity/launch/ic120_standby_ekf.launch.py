@@ -64,12 +64,6 @@ def generate_launch_description():
     
     return LaunchDescription([
 
-        Node(
-            package='ic120_unity',
-            executable='convert_goal_pose',
-            name='convert_goal_pose',
-            output="screen"),
-
         GroupAction([
             PushRosNamespace(
                 condition=IfCondition(str(use_namespace)),
@@ -88,18 +82,6 @@ def generate_launch_description():
                            '--frame-id', 'world',
                            '--child-frame-id', 'map']),
             Node(
-                package='tf2_ros',
-                executable='static_transform_publisher',
-                name='map_to_odom',
-                arguments=['--x','0', 
-                           '--y','3', 
-                           '--z','0', 
-                           '--roll','0', 
-                           '--pitch','0', 
-                           '--yaw','0', 
-                           '--frame-id', 'map',
-                           '--child-frame-id', 'ic120_tf/odom']), 
-            Node(
                 package='ic120_navigation',
                 executable='odom_broadcaster',
                 name='odom_broadcaster',
@@ -113,7 +95,7 @@ def generate_launch_description():
                                 'odom_child_frame': "ic120_tf/base_link",
                                 'poseStamped_topic_name':"/ic120/base_link/pose",
                                 'odom_topic_name':"/ic120/tracking/ground_truth",
-                                'use_real_time':False}]),
+                                'use_sim_time':True}]),            
             Node(
                 package='robot_state_publisher',
                 executable='robot_state_publisher',
@@ -153,7 +135,7 @@ def generate_launch_description():
                 parameters=[ic120_ekf_yaml_file,
                             {'map_frame' : "map",
                              'world_frame' : "map",
-                             'odom_frame' : "ic120_tf/odom",
+                              'odom_frame' : "ic120_tf/odom",
                               'base_link_frame' : "ic120_tf/base_link"}]),
             Node(
                 package='nav2_lifecycle_manager',
@@ -246,6 +228,7 @@ def generate_launch_description():
                 package="rviz2",
                 executable="rviz2",
                 name="rviz",
+                parameters=[{'use_sim_time': use_sim_time}],
                 arguments=["--display-config", ic120_standby_rviz_file]),
             
         ])

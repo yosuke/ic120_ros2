@@ -1,20 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from nav_msgs import msg
 import rclpy
-from rclpy.node import Node
 from rclpy.time import Time
-from rclpy.time import Duration
-import tf2_ros
-from nav_msgs.msg import Odometry
-import math
+from rclpy.node import Node
 from rclpy.action import ActionClient
-from nav2_msgs.action import NavigateToPose
-from geometry_msgs.msg import Quaternion, Vector3, Pose
+from rclpy.duration import Duration
+import tf2_ros
 from geometry_msgs.msg import PoseStamped
-from std_msgs.msg import Header
+from nav2_msgs.action import NavigateToPose
 from ic120_msgs.srv import DumpNav
+import math
 
 world2map_trans=[0,0,0]
 world2map_rot=[0,0,0,0]
@@ -23,81 +19,21 @@ class Ic120Navigation(Node):
 
     def __init__(self):
         super().__init__('ic120_navigation')
-        print("Start nav")
-        self.client = ActionClient(self, NavigateToPose, 'mode_base') 
+        self.get_logger().info("Start nav")
+        self.client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
 
-        self.tfBuffer = tf2_ros.Buffer()
-        self.listener = tf2_ros.TransformListener(self.tfBuffer, self)
-        transform_flg = False
-        if transform_flg == False:
-            transform_flg=self.tfBuffer.can_transform(target_frame="world",  source_frame="map", time=Time(seconds=0),timeout=Duration(seconds=4.0))
-            print("Wait for can transform")
-        
-        if(transform_flg == True):
-            self.get_logger().info("###############################################")
+        self.tf_buffer = tf2_ros.Buffer()
+        self.tf_listener = tf2_ros.TransformListener(self.tf_buffer, self)
+        self.nav_srv_client = self.create_client(DumpNav, 'nav_srv')
+        # world2map_trans,world2map_rot = self.tf_buffer.lookup_transform(target_frame="world", source_frame="map", time=Time(seconds=0))
+        self.wait_for_service_ready()
 
-            world2map_trans,world2map_rot = self.tfBuffer.lookup_transform(target_frame="world", source_frame="map", time=Time(seconds=0))
-            print("wait actionclient")
-            self.client.wait_for_server()
-            print("wait service")
-            self.client.wait_for_service('nav_srv')
-            print("Start loop")
+    def wait_for_service_ready(self):
+        while not self.nav_srv_client.wait_for_service(timeout_sec=1.0):
+            self.get_logger().info('nav_srv not available, waiting again...')
+        self.get_logger().info("Service is now available.")
 
-            while True:
-                #nav_srv_proxy  = rclpy.ServiceProxy('nav_srv', DumpNav)
-                nav_srv_proxy=self.create_client('nav_srv', DumpNav)
-                request = DumpNav.request()
-                #response = nav_srv_proxy (request)
-                while not nav_srv_proxy.wait_for_service(timeout_sec=1.0):
-                    self.get_logger().info('service not available, waiting again...')
-                response = nav_srv_proxy.call_async(request)
-                rclpy.spin_until_future_complete(self, response)
-                
-                if(response.is_ok.data == False):
-                    rate=self.create_rate(1)
-                    rate.sleep(1)
-                    continue
-                goal = self.goal_pose(response.target_pose)
-                self.client.send_goal(goal)
-                while True:
-                    now = self.get_clock().now()
-                    self.tfBuffer.can_transform(target_frame="map", source_frame="/ic120_tf/base_link", time=now, timeout=Duration(4.0))
-                    position, quaternion = self.tfBuffer.lookup_transform("map", "/ic120_tf/base_link", now)
-
-                    if(response.orientation_flag.data == True):
-                        print("orientation_flat==True")
-                        if(self.client.wait_for_result(rclpy.Duration(0.5)) == True):
-                            if(response.dump_flag.data == True):
-                                rate=self.create_rate(1)
-                                rate.sleep()
-                                print("waiting for dumpup_manager")
-                                #rclpy.wait_for_service('dumpup_srv') 
-                                #dumpup_srv_proxy  = rclpy.ServiceProxy('dumpup_srv', DumpNav)
-                                #request = DumpNav.request()
-                                #response = dumpup_srv_proxy (request)
-                                dumpup_srv = self.create_client(DumpNav, 'dumpup_srv')
-                                while not dumpup_srv.wait_for_service(timeout_sec=1.0):
-                                   self.get_logger().info('service not available, waiting again...')
-                                response = dumpup_srv.call_async(request)
-                                rclpy.spin_until_future_complete(self, response)
-                                if(response.is_ok.data == True):
-                                    print("finished")
-                                    break
-                            print("next waypoint")
-                            break
-                        print("moving!")
-                    else:
-                        print("orientation_flag==False")
-                        # ウェイポイントのゴールの周囲１ｍ以内にロボットが来たら、次のウェイポイントを発行する
-                        if(math.sqrt((position[0]-goal.pose.pose.position.x)**2 + (position[1]-goal.pose.pose.position.y)**2 ) <= 0.5):
-                            print("next waitpoint")
-                            break
-                        else:
-                            print("moving!!!")
-                            rclpy.sleep(0.5)
-                # rospy.spin()
-
-    def goal_pose(self,pose):
+    def goal_pose(self, pose: PoseStamped):
         print(pose)
         goal_pose = NavigateToPose.Goal()
         goal_pose.pose.header.frame_id="map"
@@ -107,15 +43,37 @@ class Ic120Navigation(Node):
         goal_pose.pose.pose.orientation = pose.pose.orientation
         return goal_pose
 
+    def send_goal(self, goal):
+        self.client.wait_for_server()
+        return self.client.send_goal_async(goal)
+
+    def main_logic(self):
+        request = DumpNav.Request()
+        future = self.nav_srv_client.call_async(request)
+        rclpy.spin_until_future_complete(self, future)
+        if future.result().is_ok:
+            pose = PoseStamped()
+            pose.header.frame_id = "map"
+            pose.pose.position.x = future.result().target_pose.position.x
+            pose.pose.position.y = future.result().target_pose.position.y
+            pose.pose.orientation = future.result().target_pose.orientation
+
+            goal = self.goal_pose(pose)
+            send_goal_future = self.send_goal(goal)
+            rclpy.spin_until_future_complete(self, send_goal_future)
+            if send_goal_future.result():
+                self.get_logger().info("Goal sent successfully.")
+            else:
+                self.get_logger().info("Failed to send goal.")
+        else:
+            self.get_logger().info("Service call failed.")
 
 def main(args=None):
     rclpy.init(args=args)
     ic120_navigation = Ic120Navigation()
-    rclpy.spin(ic120_navigation)
+    ic120_navigation.main_logic()
     ic120_navigation.destroy_node()
     rclpy.shutdown()
 
-
 if __name__ == '__main__':
     main()
-    

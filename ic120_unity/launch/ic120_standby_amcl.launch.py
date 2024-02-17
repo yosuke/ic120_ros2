@@ -111,12 +111,12 @@ def generate_launch_description():
             Node(
                 package='ic120_navigation',
                 executable='poseStamped2Odometry',
-                name='poseStamped2ground_truth_odom',
+                name='poseStamped2groundtruth_odom',
                 output="screen",
                 parameters=[{'odom_header_frame': "world",
                                 'odom_child_frame': "ic120_tf/base_link",
                                 'poseStamped_topic_name':"/ic120/base_link/pose",
-                                'odom_topic_name':"/ic120/tracking/ground_truth",
+                                'odom_topic_name':"/ic120/tracking/groundtruth",
                                 'use_real_time':False}]),
             Node(
                 package='robot_state_publisher',

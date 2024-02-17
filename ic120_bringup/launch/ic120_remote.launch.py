@@ -29,16 +29,7 @@ def generate_launch_description():
     params = {'robot_description': doc.toxml()}
 
     return LaunchDescription([
-        Node(
-            package='ic120_unity',
-            executable='convert_goal_pose',
-            name='convert_goal_pose',
-            output="screen"),
-        Node(
-            package='ic120_unity',
-            executable='convert_initial_pose',
-            name='convert_initial_pose',
-            output="screen"),
+        
         Node(
             package='tf2_ros',
             executable='static_transform_publisher',
@@ -48,11 +39,12 @@ def generate_launch_description():
             arguments=['--x','0.66', 
                        '--y','0', 
                        '--z','0', 
-                       '--yqw','0', 
+                       '--yaw','0', 
                        '--pitch','0', 
                        '--roll','0', 
                        '--frame-id', robot_name + '_tf/base_link',
                        '--child-frame-id', robot_name + "_tf/base_link_rot"]),
+
         IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(ekf_localization_launch_file_path),
                 launch_arguments={'robot_name': robot_name}.items(),

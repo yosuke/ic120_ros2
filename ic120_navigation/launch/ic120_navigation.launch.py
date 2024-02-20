@@ -11,7 +11,7 @@ from launch.conditions import IfCondition
 
 robot_name="ic120"
 use_autostart=True
-use_sim_time=True
+use_sim_time=False
 use_respawn=True
 use_namespace=True
 
@@ -19,9 +19,9 @@ def generate_launch_description():
 
     ic120_navigation_dir=get_package_share_directory('ic120_navigation')
 
-    navigation_parameters_yaml_file = os.path.join(ic120_navigation_dir, 'params', 'navigation_parameters.yaml')
+    navigation_parameters_yaml_file = os.path.join(ic120_navigation_dir, 'params', 'nvagation_parameters_actual_machinery.yaml')
 
-    map_yaml_file=LaunchConfiguration('map', default=os.path.join(ic120_navigation_dir, 'map', 'map.yaml'))
+    map_yaml_file=LaunchConfiguration('map', default=os.path.join(ic120_navigation_dir, 'map', 'map2.yaml'))
 
     lifecycle_nodes_localization = [
                    'map_server']
@@ -100,7 +100,8 @@ def generate_launch_description():
                 respawn=use_respawn,
                 respawn_delay=2.0,
                 parameters=[configured_params],
-                remappings=remappings_ic120_tf + [('cmd_vel', 'cmd_vel_nav')]),
+                # remappings=remappings_ic120_tf + [('cmd_vel', 'cmd_vel_nav')]
+                ),
             Node(
                 package='nav2_smoother',
                 executable='smoother_server',
@@ -128,7 +129,7 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 remappings=remappings_ic120_tf +
-                           [('cmd_vel', 'tracks/cmd_vel')]),
+                           [('cmd_vel', '/cmd_vel')]),
             Node(
                 package='nav2_bt_navigator',
                 executable='bt_navigator',
@@ -156,8 +157,9 @@ def generate_launch_description():
                 respawn_delay=2.0,
                 parameters=[configured_params],
                 remappings=remappings_ic120_tf +
-                        [('cmd_vel', 'cmd_vel_nav'), 
-                         ('cmd_vel_smoothed', 'tracks/cmd_vel')]),
+                        [
+                            # ('cmd_vel', 'cmd_vel_nav'), 
+                         ('cmd_vel_smoothed', '/cmd_vel')]),
             Node(
                 package='nav2_lifecycle_manager',
                 executable='lifecycle_manager',

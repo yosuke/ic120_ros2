@@ -36,6 +36,7 @@ setup(
             'nav_srv_server = ic120_navigation.nav_srv_server:main',
             'poseStamped2Odometry = ic120_navigation.poseStamped2Odometry:main',
             'odom_broadcaster = ic120_navigation.odom_broadcaster:main',
+            'map_generator = ic120_navigation.map_generator:main',
         ],
     },
 )

@@ -2,7 +2,7 @@
     ros__parameters:
         # for wheel and imu fusion
         use_sim_time: true
-        debug: true
+        debug: false
         frequency: 10.0
         transform_time_offset: 0.0
         transform_timeout: 0.0

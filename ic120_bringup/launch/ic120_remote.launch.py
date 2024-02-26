@@ -36,6 +36,9 @@ def generate_launch_description():
         IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(ic120_navigation_launch_file_path),
         ),
+        IncludeLaunchDescription(
+                PythonLaunchDescriptionSource(gnss_localizer_ros2_launch_file_path),
+        ),
 
         GroupAction([
             PushRosNamespace(

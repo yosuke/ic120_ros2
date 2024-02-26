@@ -31,9 +31,6 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'dump_navigation = ic120_navigation.dump_navigation:main',
-            'dumpup_srv_server = ic120_navigation.dumpup_srv_server:main',
-            'nav_srv_server = ic120_navigation.nav_srv_server:main',
             'poseStamped2Odometry = ic120_navigation.poseStamped2Odometry:main',
             'odom_broadcaster = ic120_navigation.odom_broadcaster:main',
             'map_generator = ic120_navigation.map_generator:main',

@@ -19,9 +19,9 @@ def generate_launch_description():
 
     ic120_navigation_dir=get_package_share_directory('ic120_navigation')
 
-    navigation_parameters_yaml_file = os.path.join(ic120_navigation_dir, 'params', 'nvagation_parameters_actual_machinery.yaml')
+    navigation_parameters_yaml_file = os.path.join(ic120_navigation_dir, 'params', 'navigation_parameters.yaml')
 
-    map_yaml_file=LaunchConfiguration('map', default=os.path.join(ic120_navigation_dir, 'map', 'map2.yaml'))
+    map_yaml_file=LaunchConfiguration('map', default=os.path.join(ic120_navigation_dir, 'map', 'map.yaml'))
 
     lifecycle_nodes_localization = [
                    'map_server']
@@ -63,7 +63,8 @@ def generate_launch_description():
                 name='nav2_container',
                 package='rclcpp_components',
                 executable='component_container_isolated',
-                parameters=[configured_params, {'autostart': use_autostart}],
+                parameters=[configured_params, {'autostart': use_autostart},
+                                               {'use_sim_time':use_sim_time}],
                 remappings=remappings_ic120_tf,
                 output='screen'),
             
@@ -78,7 +79,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, {'use_sim_time': use_sim_time}],
                 remappings=remappings_ic120_tf),
             Node(
                 package='nav2_lifecycle_manager',
@@ -99,7 +100,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, {'use_sim_time': use_sim_time}],
                 # remappings=remappings_ic120_tf + [('cmd_vel', 'cmd_vel_nav')]
                 ),
             Node(
@@ -109,7 +110,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, {'use_sim_time': use_sim_time}],
                 remappings=remappings_ic120_tf),
             Node(
                 package='nav2_planner',
@@ -118,7 +119,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, {'use_sim_time': use_sim_time}],
                 remappings=remappings_ic120_tf),
             Node(
                 package='nav2_behaviors',
@@ -127,7 +128,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, {'use_sim_time': use_sim_time}],
                 remappings=remappings_ic120_tf +
                            [('cmd_vel', '/cmd_vel')]),
             Node(
@@ -137,7 +138,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, {'use_sim_time': use_sim_time}],
                 remappings=remappings_ic120_tf+[('ic120/goal_pose','goal_pose')]),
             Node(
                 package='nav2_waypoint_follower',
@@ -155,7 +156,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, {'use_sim_time': use_sim_time}],
                 remappings=remappings_ic120_tf +
                         [
                             # ('cmd_vel', 'cmd_vel_nav'), 

@@ -9,6 +9,7 @@ import math
 from tf2_ros import TransformBroadcaster
 import tf_transformations
 from geometry_msgs.msg import Quaternion
+import time
 
 class PoseToOdomNode(Node):
     def __init__(self):
@@ -111,6 +112,7 @@ class PoseToOdomNode(Node):
                     self.counter += 1
 
             rclpy.spin_once(self, timeout_sec=0)
+            time.sleep(0.01)
 
 def main(args=None):
     rclpy.init(args=args)

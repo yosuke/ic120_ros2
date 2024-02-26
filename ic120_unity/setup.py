@@ -26,8 +26,6 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'convert_goal_pose = ic120_unity.convert_goal_pose:main',
-            'convert_initial_pose = ic120_unity.convert_initial_pose:main'
         ],
     },
 )

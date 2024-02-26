@@ -50,8 +50,6 @@ def generate_launch_description():
             param_rewrites=param_substitutions,
             convert_types=True)
     
-    # remappings = [('/tf', 'tf'),
-    #               ('/tf_static', 'tf_static')]
     
     remappings_ic120_tf=[('/ic120/tf','tf'),
                          ('/ic120/tf_static', 'tf_static')]
@@ -62,17 +60,6 @@ def generate_launch_description():
     params = {'robot_description': doc.toxml()}
     
     return LaunchDescription([
-
-        Node(
-            package='ic120_unity',
-            executable='convert_goal_pose',
-            name='convert_goal_pose',
-            output="screen"),
-        Node(
-            package='ic120_unity',
-            executable='convert_initial_pose',
-            name='convert_initial_pose',
-            output="screen"),
         
         GroupAction([
             PushRosNamespace(
@@ -116,8 +103,8 @@ def generate_launch_description():
                 parameters=[{'odom_header_frame': "world",
                                 'odom_child_frame': "ic120_tf/base_link",
                                 'poseStamped_topic_name':"/ic120/base_link/pose",
-                                'odom_topic_name':"/ic120/tracking/groundtruth",
-                                'use_real_time':False}]),
+                                'odom_topic_name':"/ic120/tracking/ground_truth",
+                                'use_real_time':True}]),
             Node(
                 package='robot_state_publisher',
                 executable='robot_state_publisher',

@@ -51,8 +51,6 @@ def generate_launch_description():
             param_rewrites=param_substitutions,
             convert_types=True)
     
-    #remappings = [('/tf', 'tf'),
-    #              ('/tf_static', 'tf_static')]
     
     remappings_ic120_tf=[('/ic120/tf','tf'),
                          ('/ic120/tf_static', 'tf_static')]
@@ -95,19 +93,19 @@ def generate_launch_description():
                                 'odom_child_frame': "ic120_tf/base_link",
                                 'poseStamped_topic_name':"/ic120/base_link/pose",
                                 'odom_topic_name':"/ic120/tracking/ground_truth",
-                                'use_sim_time':True}]),            
+                                'use_sim_time':use_sim_time}]),            
             Node(
                 package='robot_state_publisher',
                 executable='robot_state_publisher',
                 output="screen",
-                parameters=[params],
+                parameters=[params, {'use_sim_time':use_sim_time}],
                 remappings=remappings_ic120_tf),   
             Node(
                 condition=IfCondition('true'),
                 name='nav2_container',
                 package='rclcpp_components',
                 executable='component_container_isolated',
-                parameters=[configured_params, {'autostart': use_autostart}],
+                parameters=[configured_params, {'autostart': use_autostart}, {'use_sim_time':use_sim_time}],
                 remappings=remappings_ic120_tf,
                 output='screen'),
             
@@ -122,7 +120,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, {'use_sim_time':use_sim_time}],
                 remappings=remappings_ic120_tf),
             Node(
                 package='robot_localization',
@@ -136,7 +134,8 @@ def generate_launch_description():
                             {'map_frame' : "map",
                              'world_frame' : "map",
                               'odom_frame' : "ic120_tf/odom",
-                              'base_link_frame' : "ic120_tf/base_link"}]),
+                              'base_link_frame' : "ic120_tf/base_link",
+                              'use_sim_time':use_sim_time}]),
             Node(
                 package='nav2_lifecycle_manager',
                 executable='lifecycle_manager',
@@ -144,7 +143,8 @@ def generate_launch_description():
                 output='screen',
                 parameters=[{'use_sim_time': use_sim_time},
                             {'autostart': use_autostart},
-                            {'node_names': lifecycle_nodes_localization}]),
+                            {'node_names': lifecycle_nodes_localization},
+                            {'use_sim_time':use_sim_time}]),
 
             #######################
             # Navigation packages #
@@ -156,7 +156,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, {'use_sim_time':use_sim_time}],
                 remappings=remappings_ic120_tf + [('cmd_vel', 'cmd_vel_nav')]),
             Node(
                 package='nav2_smoother',
@@ -165,7 +165,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, {'use_sim_time':use_sim_time}],
                 remappings=remappings_ic120_tf),
             Node(
                 package='nav2_planner',
@@ -174,7 +174,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, {'use_sim_time':use_sim_time}],
                 remappings=remappings_ic120_tf),
             Node(
                 package='nav2_behaviors',
@@ -183,7 +183,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, {'use_sim_time':use_sim_time}],
                 remappings=remappings_ic120_tf +
                            [('cmd_vel', 'tracks/cmd_vel')]),
             Node(
@@ -193,7 +193,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, {'use_sim_time':use_sim_time}],
                 remappings=remappings_ic120_tf+[('ic120/goal_pose','goal_pose')]),
             Node(
                 package='nav2_waypoint_follower',
@@ -202,7 +202,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, {'use_sim_time':use_sim_time}],
                 remappings=remappings_ic120_tf),
             Node(
                 package='nav2_velocity_smoother',
@@ -211,7 +211,7 @@ def generate_launch_description():
                 output='screen',
                 respawn=use_respawn,
                 respawn_delay=2.0,
-                parameters=[configured_params],
+                parameters=[configured_params, {'use_sim_time':use_sim_time}],
                 remappings=remappings_ic120_tf +
                         [('cmd_vel', 'cmd_vel_nav'), 
                          ('cmd_vel_smoothed', 'tracks/cmd_vel')]),

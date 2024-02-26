@@ -6,7 +6,7 @@ from PIL import Image
 class MapSaver(Node):
     def __init__(self):
         super().__init__('map_saver')
-        self.size_px = 3000
+        self.size_px = 5000
         self.resolution = 10.0  # メートル単位のピクセルあたりの解像度
         self.obstacle_size = 50  # 障害物のサイズ（ピクセル）
         self.map_data = self.generate_map()

@@ -20,11 +20,9 @@
   <exec_depend>nav2_waypoint_follower</exec_depend>
   <exec_depend>nav2_velocity_smoother</exec_depend>
   <exec_depend>robot_localization</exec_depend>
-  <exec_depend>joint_state_publisher</exec_depend>
-  <exec_depend>robot_localization</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend> 
 
   <exec_depend>ic120_description</exec_depend>
-  <exec_depend>ic120_navigation</exec_depend>
   <exec_depend>gnss_localizer_ros2</exec_depend>  
 
   <export>

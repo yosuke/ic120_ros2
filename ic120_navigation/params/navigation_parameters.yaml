@@ -140,7 +140,7 @@ controller_server:
     # DWB parameters
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
-      debug_trajectory_details: True
+      debug_trajectory_details: false
       min_vel_x: -1.0
       min_vel_y: 0.0
       max_vel_x: 1.0

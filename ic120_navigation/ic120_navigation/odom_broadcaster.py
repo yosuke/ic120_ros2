@@ -12,14 +12,21 @@ class OdomBroadcaster(Node):
         super().__init__('odom_tf_broadcaster')
         self.br = TransformBroadcaster(self)
         self.declare_parameter('odom_topic', "/ic120/odom")
-        self.odom_frame = self.get_parameter('odom_topic').get_parameter_value().string_value
-        self.odom_sub = self.create_subscription(Odometry, self.odom_frame, self.odom_cb, 10)
+        self.declare_parameter('odom_frame', "ic120_tf/odom")
+        self.declare_parameter('base_link_frame', "ic120_tf/base_link")
+        self.odom_topic = self.get_parameter('odom_topic').get_parameter_value().string_value
+        self.odom_frame = self.get_parameter('odom_frame').get_parameter_value().string_value
+        self.base_link_frame = self.get_parameter('base_link_frame').get_parameter_value().string_value
+        self.odom_sub = self.create_subscription(Odometry, self.odom_topic, self.odom_cb, 10)
 
     def odom_cb(self, msg):
+        # self.get_logger().info("odom_topic" + self.odom_topic)
+        # self.get_logger().info("odom_frame" + self.odom_frame)
+        # self.get_logger().info("base_link_frame" + self.base_link_frame)
         transform = TransformStamped()
         transform.header.stamp = msg.header.stamp
-        transform.header.frame_id = "ic120_tf/odom"
-        transform.child_frame_id = "ic120_tf/base_link"
+        transform.header.frame_id = self.odom_frame
+        transform.child_frame_id = self.base_link_frame
         transform.transform.translation.x = msg.pose.pose.position.x
         transform.transform.translation.y = msg.pose.pose.position.y
         transform.transform.translation.z = msg.pose.pose.position.z

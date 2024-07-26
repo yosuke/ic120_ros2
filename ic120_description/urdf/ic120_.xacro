@@ -2,7 +2,6 @@
 <robot name="ic120" xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<xacro:property name="PI" value="3.1415926535" />
 	<xacro:property name="tf_prefix" value=""/>
-    <xacro:property name="ic120_description_dir_path" value=""/>
     
     <!-- Base Link -->
     <link name="${tf_prefix}/base_link"/>
@@ -15,8 +14,6 @@
         <visual>
             <geometry>
                 <mesh filename="package://ic120_description/meshes/ic120-body.dae"/>
-                <!-- <mesh filename="${ic120_description_dir_path}/meshes/ic120-body.dae"/> -->
-                <!-- <mesh filename="/home/common/SIP_PROJECTS/M2/DEV_TS/ros2_ws/install/ic120_description/share/ic120_description/meshes/ic120-body.dae"/> -->
             </geometry>
         </visual>
         <inertial>
@@ -29,13 +26,14 @@
     </link>
 
     <!-- left sprocket axis -->
-    <joint name="${ic120_description_dir_path}sprocket_left_joint" type="continuous">
+    <joint name="sprocket_left_joint" type="continuous">
         <origin xyz="-2.35 1 0.65"/>
         <axis xyz="0 1 0"/>
         <parent link="${tf_prefix}/body_link"/>
         <child link="${tf_prefix}/left_sprocket_link"/>
     </joint>
     <link name="${tf_prefix}/left_sprocket_link"/>
+
 
     <!-- right sprocket axis -->
     <joint name="sprocket_right_joint" type="continuous">

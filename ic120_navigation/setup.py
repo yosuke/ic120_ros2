@@ -17,6 +17,7 @@ setup(
         (os.path.join('share', package_name, 'map'),glob('map/*.pgm')),
         (os.path.join('share', package_name, 'map'),glob('map/*.yaml')),
         (os.path.join('share', package_name, 'params'),glob('params/*.yaml')),
+        (os.path.join('share', package_name, 'params'),glob('params/*.xml')),
         (os.path.join('share', package_name, 'parameters'),glob('parameters/*.yaml')),
         (os.path.join('share', package_name, 'rviz'),glob('rviz/*.rviz')),
         (os.path.join('share', package_name, 'scripts'),glob('scripts/*.py')),
@@ -34,6 +35,7 @@ setup(
             'poseStamped2Odometry = ic120_navigation.poseStamped2Odometry:main',
             'odom_broadcaster = ic120_navigation.odom_broadcaster:main',
             'map_generator = ic120_navigation.map_generator:main',
+
         ],
     },
 )

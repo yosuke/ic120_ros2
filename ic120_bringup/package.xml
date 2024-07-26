@@ -8,7 +8,6 @@
   <license>TODO: License declaration</license>
 
   <exec_depend>tf2_ros</exec_depend>
-  <exec_depend>nav2_container</exec_depend>
   <exec_depend>nav2_map_server</exec_depend>
   <exec_depend>nav2_lifecycle_manager</exec_depend>
   <exec_depend>nav2_controller</exec_depend>

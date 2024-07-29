@@ -5,11 +5,8 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
-        - /RobotModel1/Links1
         - /TF1
         - /TF1/Tree1
-        - /TF1/Tree1/base_link1
-        - /TF1/Tree1/base_link1/body_link1
       Splitter Ratio: 0.5
     Tree Height: 250
   - Class: rviz_common/Views
@@ -18,10 +15,6 @@ Panels:
       - /Current View1/Focal Point1
     Name: Views
     Splitter Ratio: 0.5
-Preferences:
-  PromptSaveOnExit: true
-Toolbars:
-  toolButtonStyle: 2
 Visualization Manager:
   Class: ""
   Displays:
@@ -46,46 +39,6 @@ Visualization Manager:
     - Alpha: 1
       Class: rviz_default_plugins/RobotModel
       Collision Enabled: false
-      Enabled: true
-      Links:
-        All Links Enabled: true
-        Expand Joint Details: false
-        Expand Link Details: true
-        Expand Tree: false
-        Link Tree Style: Links in Alphabetic Order
-        base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        body_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        cylinder_head_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        cylinder_rod_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        left_sprocket_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        right_sprocket_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        vessel_pin_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-      Name: RobotModel
       Description File: ""
       Description Source: Topic
       Description Topic:
@@ -94,6 +47,49 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /robot_description
+      Enabled: true
+      Links:
+        /base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        /body_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        /cylinder_head_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        /cylinder_rod_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        /left_sprocket_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        /right_sprocket_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        /vessel_pin_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+      Mass Properties:
+        Inertia: false
+        Mass: false
+      Name: RobotModel
       TF Prefix: ""
       Update Interval: 0
       Value: true
@@ -113,6 +109,8 @@ Visualization Manager:
           Value: true
         left_sprocket_link:
           Value: true
+        map:
+          Value: true
         right_sprocket_link:
           Value: true
         vessel_pin_link:
@@ -123,33 +121,36 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        base_link:
-          body_link:
-            cylinder_head_link:
-              cylinder_rod_link:
+        map:
+          base_link:
+            body_link:
+              cylinder_head_link:
+                cylinder_rod_link:
+                  {}
+              left_sprocket_link:
                 {}
-            left_sprocket_link:
-              {}
-            right_sprocket_link:
-              {}
-            vessel_pin_link:
-              {}
+              right_sprocket_link:
+                {}
+              vessel_pin_link:
+                {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Default Light: true
-    Fixed Frame: ic120_tf/base_link
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:
     - Class: rviz_default_plugins/MoveCamera
+  Transformation:
+    Current:
+      Class: rviz_default_plugins/TF
   Value: true
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 8.00383186340332
+      Distance: 10.923288345336914
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -164,10 +165,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.025398820638656616
+      Pitch: 0.28039881587028503
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz2)
-      Yaw: 1.558586597442627
+      Yaw: 0.6085870862007141
     Saved: ~
 Window Geometry:
   Displays:
@@ -179,5 +180,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1297
-  X: 417
-  Y: 236
+  X: 2438
+  Y: 547

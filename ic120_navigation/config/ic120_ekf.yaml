@@ -1,4 +1,4 @@
-/ic120/ekf_global:
+ekf_global:
     ros__parameters:
         # for wheel and imu fusion
         use_sim_time: true

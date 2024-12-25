@@ -43,10 +43,38 @@ def generate_launch_description():
                             ('odom0','/ic120/odom_pose'),
                             ('odom1','/ic120/gnss_odom')], # GNSSのトピック名を確認すること
                 parameters=[ic120_ekf_yaml_file,
-                            {'map_frame' : 'map',
-                            'odom_frame' : robot_name + '_tf/odom',
-                            'base_link_frame' : robot_name + '_tf/base_link',
-                            'world_frame' : 'map',
-                            'use_sim_time' : False}]),
+                                            {
+                                            'debug': False,
+                                            'frequency': 10.0,
+                                            'transform_time_offset': 0.0,
+                                            'transform_timeout': 0.0,
+                                            'print_diagnostics': True,
+                                            'publish_acceleration': True,
+                                            'print_diagnostics': True,
+                                            'publish_tf': True,
+                                            'two_d_mode': True ,                                               
+                                                'map_frame' : 'map',
+                                            'odom_frame' : robot_name + '_tf/odom',
+                                            'base_link_frame' : robot_name + '_tf/base_link',
+                                            'world_frame' : 'map',
+                                            'use_sim_time' : False,
+                                            'odom0' : '/ic120/odom_pose',
+                                            'odom0_config': [
+                                                True,  True,  False,
+                                                False, False, True,
+                                                False, False, False,
+                                                False, False, False,
+                                                False, False, False],
+                                            'odom0_differential': False,
+                                            'odom1' : '/ic120/gnss_odom',
+                                            'odom1_config': [
+                                                True,  True,  True,
+                                                False, False, True,
+                                                False, False, False,
+                                                False, False, False,
+                                                False, False, False],
+                                            'odom1_differential': False,
+                                            }]
+            ),
         ])
     ])

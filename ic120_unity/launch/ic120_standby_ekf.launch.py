@@ -99,7 +99,7 @@ def process_xacro(context, *args, **kwargs):
     ic120_xacro_file = os.path.join(ic120_description_dir, "urdf", "ic120.xacro")
     with open(ic120_xacro_file, 'r') as file:
         filedata = file.read()
-    filedata = filedata.replace('<xacro:property name="tf_prefix" value=""/>', f'<xacro:property name="tf_prefix" value="{tf_prefix_val}"/>')
+    filedata = filedata.replace('<xacro:property name="tf_prefix" value="ic120_tf"/>', f'<xacro:property name="tf_prefix" value="{tf_prefix_val}"/>')
     with tempfile.NamedTemporaryFile('w+', delete=False) as temp_file:
         temp_file.write(filedata)
         temp_file_path = temp_file.name

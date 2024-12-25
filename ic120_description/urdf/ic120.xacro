@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot name="ic120" xmlns:xacro="http://www.ros.org/wiki/xacro">
 	<xacro:property name="PI" value="3.1415926535" />
-	<xacro:property name="tf_prefix" value=""/>
+	<xacro:property name="tf_prefix" value="ic120_tf"/>
     <xacro:property name="ic120_description_dir_path" value=""/>
     
     <!-- Base Link -->

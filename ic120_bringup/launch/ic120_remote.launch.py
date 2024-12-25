@@ -36,24 +36,24 @@ def generate_launch_description():
         IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(ic120_navigation_launch_file_path),
         ),
-        IncludeLaunchDescription(
-                PythonLaunchDescriptionSource(gnss_localizer_ros2_launch_file_path),
-        ),
+        # IncludeLaunchDescription(
+        #         PythonLaunchDescriptionSource(gnss_localizer_ros2_launch_file_path),
+        # ),
 
         GroupAction([
             PushRosNamespace(
                 condition=IfCondition(str(use_namespace)),
                 namespace=robot_name),
 
-            DeclareLaunchArgument('robot_name', default_value=robot_name,),
+            DeclareLaunchArgument('robot_name', default_value=robot_name),
 
             Node(
                 package='tf2_ros',
                 executable='static_transform_publisher',
                 name='world_to_map',
-                arguments=['--x','21421.70', 
-                           '--y','14020', 
-                           '--z','68.62', 
+                arguments=['--x','21395.178', 
+                           '--y','14034.450', 
+                           '--z','28.552', 
                            '--roll','0', 
                            '--pitch','0', 
                            '--yaw','0', 

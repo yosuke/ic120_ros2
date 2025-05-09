@@ -1,0 +1,16 @@
+name: builder
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build_testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: jspricke/ros-deb-builder-action@main
+        with:
+          ROS_DISTRO: humble
+          DEB_DISTRO: jammy
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOS_FILE: .rosinstall

@@ -1,0 +1,2 @@
+- git: {local-name: com3_ros, uri: 'https://github.com/pwri-opera/com3_ros.git', version: ros2_packaging}
+- git: {local-name: gnss_localizer_ros2, uri: 'https://github.com/pwri-opera/gnss_localizer_ros2.git', version: main}

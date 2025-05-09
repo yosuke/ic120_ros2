@@ -1,0 +1,21 @@
+com3_msgs:
+  ubuntu:
+  - ros-humble-com3-msgs
+ic120_description:
+  ubuntu:
+  - ros-humble-ic120-description
+ic120_msgs:
+  ubuntu:
+  - ros-humble-ic120-msgs
+ic120_unity:
+  ubuntu:
+  - ros-humble-ic120-unity
+gnss_localizer_ros2:
+  ubuntu:
+  - ros-humble-gnss-localizer-ros2
+ic120_navigation:
+  ubuntu:
+  - ros-humble-ic120-navigation
+ic120_bringup:
+  ubuntu:
+  - ros-humble-ic120-bringup

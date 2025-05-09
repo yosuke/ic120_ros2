@@ -1,0 +1,171 @@
+Package: ros-humble-com3-msgs-dbgsym
+Package-Type: ddeb
+Architecture: amd64
+Version: 0-2025.05.09.07.56
+Auto-Built-Package: debug-symbols
+Priority: optional
+Section: debug
+Source: ros-humble-com3-msgs
+Maintainer: Genki Yamauchi <yamauchi-g573bs@pwri.go.jp>
+Installed-Size: 639
+Depends: ros-humble-com3-msgs (= 0-2025.05.09.07.56)
+Filename: ./ros-humble-com3-msgs-dbgsym_0-2025.05.09.07.56_amd64.ddeb
+Size: 446984
+MD5sum: b446c12954c5287ea65fce4c9bc9576a
+SHA1: e2f4af2fa9a3825f01107e57991851891b4b145b
+SHA256: a01db0079950ff67108bb46f2f9a41f952bcebe4b5691f916963c9fd6ec00446
+SHA512: 78c6bf26a66b70d8aaec23bd91d168c8b09ac7056aa6f15289cb7970741f8e00abac3085df7772c251ffbb10c32848989c9f9bfbf3c752dcf3817731f0222bb9
+Description: debug symbols for ros-humble-com3-msgs
+Build-Ids: 398fd68187514a59e95fc631903982cb5d77e831 6c9778416e1cb0924c231e61145d692f0dd69249 8c771efd44420518f5e6adec2188a012d5082f77 9272e3f0ee163ad89c2af697ff56a2d7dcbc5b1c 9983037b9c68bb01350b7627c56e13f851452df0 9e59c6999dc246de5ddcc9f9a54a7f19e60b02e3 b1ccd3f8de77372d02e0a1100723e74f2800971b b55d9402ee82a46e7f171e43694462493e12872f b81a6f6111c56bd71a46444662287d3fe0761000 bf96a777fe5b35fbabc7cac148aeb9e61ea4b5e7 e4ca189640da2ed4bb0d6dfa909f92738ea6299d eae0c87498f201f2f5f2913cea45117ee5d1fc37
+
+Package: ros-humble-com3-msgs
+Architecture: amd64
+Version: 0-2025.05.09.07.56
+Priority: optional
+Section: misc
+Maintainer: Genki Yamauchi <yamauchi-g573bs@pwri.go.jp>
+Installed-Size: 913
+Depends: libc6 (>= 2.14), libgcc-s1 (>= 3.3.1), libpython3.10 (>= 3.10.0), libstdc++6 (>= 5.2), ros-humble-fastcdr, ros-humble-rosidl-default-runtime, ros-humble-sensor-msgs, ros-humble-std-msgs
+Filename: ./ros-humble-com3-msgs_0-2025.05.09.07.56_amd64.deb
+Size: 79858
+MD5sum: 7861160420bbebc471c2dfc13b4dbb5c
+SHA1: 45dad5b34648a24838d51a0baf0992554eb4e6ac
+SHA256: 22a025db6b2d57938f62e6663ee3733567e20976710dc2e8b2a843d3e29cecef
+SHA512: 05916d6feed6cf7b95419bae9a8c65bf1d263cd1000c97d216349736d298d5d9fe3686a84c0c53d17a2dc0508e3f925839d946e33fdf043fe33db263fb217285
+Description: The com3_msgs package
+
+Package: ros-humble-gnss-localizer-ros2-dbgsym
+Package-Type: ddeb
+Architecture: amd64
+Version: 0-2025.05.09.07.59
+Auto-Built-Package: debug-symbols
+Priority: optional
+Section: debug
+Source: ros-humble-gnss-localizer-ros2
+Maintainer: Genki Yamauchi <yamauchi-g573bs@pwri.go.jp>
+Installed-Size: 3539
+Depends: ros-humble-gnss-localizer-ros2 (= 0-2025.05.09.07.59)
+Filename: ./ros-humble-gnss-localizer-ros2-dbgsym_0-2025.05.09.07.59_amd64.ddeb
+Size: 2911774
+MD5sum: 6cd6e7c6ae45e474ff7a5c3d045685f5
+SHA1: d2a5de5a47b939bce8e70959d7f7bbdf6c41c65a
+SHA256: 4f7fd87b672818fd237842da0a940a4a4c2cef35039eea518de7448165c09e20
+SHA512: 1721c95fd2ce800b7584730eaae3e0e10fb6444fcf86d34e57cdbf6b9b731ecd69e2d26eb20314b933a51cb0d29939e70a0cf3cfb81c1d61ccc1e605d11ce05c
+Description: debug symbols for ros-humble-gnss-localizer-ros2
+Build-Ids: 97692cfc5253bfcc7cd78a9b70d5f92d2367640c
+
+Package: ros-humble-gnss-localizer-ros2
+Architecture: amd64
+Version: 0-2025.05.09.07.59
+Priority: optional
+Section: misc
+Maintainer: Genki Yamauchi <yamauchi-g573bs@pwri.go.jp>
+Installed-Size: 514
+Depends: libc6 (>= 2.34), libgcc-s1 (>= 3.3.1), libstdc++6 (>= 11), libboost-all-dev, ros-humble-com3-msgs, ros-humble-diagnostic-msgs, ros-humble-diagnostic-updater, ros-humble-geometry-msgs, ros-humble-nav-msgs, ros-humble-rclcpp, ros-humble-sensor-msgs, ros-humble-tf2, ros-humble-tf2-geometry-msgs, ros-humble-tf2-ros
+Filename: ./ros-humble-gnss-localizer-ros2_0-2025.05.09.07.59_amd64.deb
+Size: 122972
+MD5sum: 0e37b7fc7f031076aff62a165482f547
+SHA1: 851914c3091af323f53aa9bd14fb3d5166bd20ff
+SHA256: 4c6a325ebd8426448df154120f5f6a31414abf5c26ac5f5d322127f53613597c
+SHA512: 03d4c958b45b1d8c2c5b0be3acc17e23dd4f987eee39dbce629b4d3a6e916c72ebf3289502fb36bde57ecac2b044e4e3f68bde781934b71fb2a7134b9b97fb00
+Description: gnss_localizer_ros2 package
+
+Package: ros-humble-ic120-bringup
+Architecture: amd64
+Version: 0-2025.05.09.08.01
+Priority: optional
+Section: misc
+Maintainer: ws <ws@todo.todo>
+Installed-Size: 36
+Depends: ros-humble-gnss-localizer-ros2, ros-humble-ic120-description, ros-humble-ic120-navigation, ros-humble-ic120-unity, ros-humble-nav2-behaviors, ros-humble-nav2-bt-navigator, ros-humble-nav2-controller, ros-humble-nav2-lifecycle-manager, ros-humble-nav2-map-server, ros-humble-nav2-planner, ros-humble-nav2-smoother, ros-humble-nav2-velocity-smoother, ros-humble-nav2-waypoint-follower, ros-humble-robot-localization, ros-humble-tf2-ros
+Filename: ./ros-humble-ic120-bringup_0-2025.05.09.08.01_amd64.deb
+Size: 3698
+MD5sum: 984391bc7ce11e2b4a4ab6c4ed6534f3
+SHA1: c84fc70c5380ace6a4ab47d32bfc31a70f3cc49b
+SHA256: 7e1fdd179b6f09db19c7bf20f342b977142bb482b0de487f92c8cbfa0631fadf
+SHA512: 49ba3ae19371a43b555fc49ab22cc0cc5f601d0c666de4a56e60a665e7a03a2b51f832f1b7fa8305718914e6730fb1c19b661c3ec88c827d69a08ef4caafab1e
+Description: The ic120_bringup package
+
+Package: ros-humble-ic120-description
+Architecture: amd64
+Version: 0-2025.05.09.07.57
+Priority: optional
+Section: misc
+Maintainer: example <example@example.com>
+Installed-Size: 25530
+Depends: ros-humble-controller-manager, ros-humble-effort-controllers, ros-humble-joint-state-publisher, ros-humble-joint-state-publisher-gui, ros-humble-robot-state-publisher, ros-humble-rqt-gui, ros-humble-rviz2, ros-humble-xacro
+Filename: ./ros-humble-ic120-description_0-2025.05.09.07.57_amd64.deb
+Size: 21460958
+MD5sum: 745d32a816e0f65465d179d8d290334d
+SHA1: dcb6742c87caa410d584f696e48b594ece54395f
+SHA256: 2e7e9653b54702725b465610bcaced9d1a5dc8bbd2ff99f4fa20a7da7bbd7ef5
+SHA512: 87f85829e6b37a20d9bf454cfd41dee7ae4fa8a7c2356ef1269750a16916944d49e9c0ec91d0f51cb909e28e3e1306dda47e57ecef12c2231e24dc5d83702610
+Description: The ic120_description package
+
+Package: ros-humble-ic120-msgs-dbgsym
+Package-Type: ddeb
+Architecture: amd64
+Version: 0-2025.05.09.07.57
+Auto-Built-Package: debug-symbols
+Priority: optional
+Section: debug
+Source: ros-humble-ic120-msgs
+Maintainer: g3 <example@example.com>
+Installed-Size: 278
+Depends: ros-humble-ic120-msgs (= 0-2025.05.09.07.57)
+Filename: ./ros-humble-ic120-msgs-dbgsym_0-2025.05.09.07.57_amd64.ddeb
+Size: 160194
+MD5sum: e7b2d6be2875ca5c2fff74d69613055b
+SHA1: 6e3504cc0973ccdf39214b616da8c89fffffe56c
+SHA256: b392fd088e7f13c91b59b07c7f5a6f121cf5bb5b4ef05b7f21b91725c81e053e
+SHA512: 6f15a57884b42d6276d8976a7926eac02607850a8190612636c22d49102097971c0cdd9bc89a7717c2b6149ef1ffac17eaae58316f30bdf2256cb19db46884d0
+Description: debug symbols for ros-humble-ic120-msgs
+Build-Ids: 12693552c2d00f7135d6060d1916efd25cd777f8 202d343730e0b5f44d393174056c09be6653caec 40e20052c3c12c43825e1e2f6eb41f6ad52dd7b3 42340594f4527b7b8c39ab9d9ecc588d12d898ae 469df7159d8de9d672e33892126c0e17e16bc4bc 562940da0fd5dc9e18c4705b285f123b63965acb 6121849be19f426bf6edd802b28e5ea4bce8a342 7ee33aabc6d17be7129ce8a445e9b17427431fd7 85e941c6eb6e3ebf424666b466bc8ddbc8fba78f 8a5bfc38447008d4efdd6a46e6d87796e05e8bc6 ca3333da521e8f597911f9e9b9d24ef0718d1652 e6a2be30fb20e992587184dde4ca4e4464f85236
+
+Package: ros-humble-ic120-msgs
+Architecture: amd64
+Version: 0-2025.05.09.07.57
+Priority: optional
+Section: misc
+Maintainer: g3 <example@example.com>
+Installed-Size: 509
+Depends: libc6 (>= 2.4), libgcc-s1 (>= 3.3.1), libpython3.10 (>= 3.10.0), libstdc++6 (>= 5.2), ros-humble-fastcdr, ros-humble-geometry-msgs, ros-humble-rclcpp, ros-humble-rosidl-default-runtime, ros-humble-sensor-msgs, ros-humble-shape-msgs, ros-humble-std-msgs
+Filename: ./ros-humble-ic120-msgs_0-2025.05.09.07.57_amd64.deb
+Size: 44636
+MD5sum: 493578a4d67ab8f7ef380a026aee50d4
+SHA1: f1db14cafb2dc41bfddf2ed09479a61569926a3e
+SHA256: 36a4c442c33eea766a1bcb017b5a803c43a5ca31afe1e0bb6bf261cc26d452fb
+SHA512: 665ccce66cc2bcbf49d1816df2fa2b9f0ad07b4cb07367cc4dd5607bc1a17178758bff9c48c7991599faec5f748b8fdcf0a79c7f66e44045197a0abc664c6e21
+Description: The ic120_msgs package
+
+Package: ros-humble-ic120-navigation
+Architecture: amd64
+Version: 0-2025.05.09.08.00
+Priority: optional
+Section: misc
+Maintainer: ws <ws@todo.todo>
+Installed-Size: 24529
+Depends: ros-humble-gnss-localizer-ros2, ros-humble-ic120-description, ros-humble-joint-state-publisher, ros-humble-navigation2, ros-humble-robot-localization, ros-humble-robot-state-publisher, ros-humble-rviz2, ros-humble-tf-transformations
+Filename: ./ros-humble-ic120-navigation_0-2025.05.09.08.00_amd64.deb
+Size: 19294
+MD5sum: 5310888bcae864e98e67bb7b478a988a
+SHA1: c9e48e608e13d777c6ae04749d5cc77b41e6b07a
+SHA256: 90fe411ed27f7def7059f46c64e95710e2447038780d75b4e6fba4dc4fd2a1d5
+SHA512: c6e9991627f8ed0882107148d5afcadcef8d76dc7773ed874d29f1ee5ac790d578853349a564ceccd7b97048c3e8fd41dc7aefb03252b2add4588534035b9887
+Description: The ic120_unity package
+
+Package: ros-humble-ic120-unity
+Architecture: amd64
+Version: 0-2025.05.09.07.58
+Priority: optional
+Section: misc
+Maintainer: ws <ws@todo.todo>
+Installed-Size: 68
+Filename: ./ros-humble-ic120-unity_0-2025.05.09.07.58_amd64.deb
+Size: 8462
+MD5sum: a8cfbd71096aa717f429f11af956d029
+SHA1: d2ac56479918bc34fc0fbcd5da2642371488b1db
+SHA256: 04d8b8331adc6ba33f837a661c1d6e3207c8f70ce15cdcaf7e1ac4c96c3367ac
+SHA512: 0d627381543251b262313be950f3fa77608f1b17d5c069c852a34a28d08676d87d8a99814940fb20a173ef23cde1fa42df4083a717a64fce32a57f9fa14afcfa
+Description: TODO: Package description
+
